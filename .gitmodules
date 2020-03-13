@@ -1,0 +1,3 @@
+[submodule "lib/inkpot-core"]
+	path = lib/inkpot-core
+	url = git@gitlab.com:inkpot/inkpot-core.git

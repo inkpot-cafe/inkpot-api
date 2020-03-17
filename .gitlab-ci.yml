@@ -12,7 +12,7 @@ before_script:
 #  - echo `pwd` # debug
 #  - echo "$CI_BUILD_NAME, $CI_BUILD_REF_NAME $CI_BUILD_STAGE" # debug
   - git submodule sync --recursive
-  - git submodule update --init --recursive
+  - git submodule update --recursive
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
 cache:

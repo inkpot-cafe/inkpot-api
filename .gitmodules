@@ -1,3 +1,4 @@
 [submodule "inkpot-core"]
 	path = inkpot-core
-	url = https://gitlab.com/inkpot/inkpot-core.git
+	url = ../inkpot-core.git
+	branch = master

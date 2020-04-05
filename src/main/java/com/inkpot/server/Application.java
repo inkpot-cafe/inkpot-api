@@ -4,10 +4,12 @@ import com.inkpot.core.Context;
 import com.inkpot.core.Document;
 import com.inkpot.core.Inkpot;
 import com.inkpot.core.Store;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,15 +18,19 @@ import java.util.UUID;
 @SpringBootApplication
 public class Application {
 
+    @Autowired
+    private Store store;
+
     @Bean
     public Context getContext() {
-        return Inkpot.createContext(new AppStore());
+        return Inkpot.createContext(store);
     }
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
+    @Component
     static class AppStore implements Store {
 
         Map<UUID, Document> documents = new HashMap<>();

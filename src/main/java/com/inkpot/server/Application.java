@@ -1,8 +1,8 @@
 package com.inkpot.server;
 
-import com.inkpot.core.Context;
+import com.inkpot.core.CoreContext;
 import com.inkpot.core.Document;
-import com.inkpot.core.Inkpot;
+import com.inkpot.core.InkpotCore;
 import com.inkpot.core.Store;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -11,9 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @SpringBootApplication
 public class Application {
@@ -22,8 +20,8 @@ public class Application {
     private Store store;
 
     @Bean
-    public Context getContext() {
-        return Inkpot.createContext(store);
+    public CoreContext getContext() {
+        return InkpotCore.createContext(store);
     }
 
     public static void main(String[] args) {
@@ -48,6 +46,12 @@ public class Application {
         @Override
         public void delete(@NonNull UUID uuid) {
             documents.remove(uuid);
+        }
+
+        @NonNull
+        @Override
+        public Set<Document> readAll() {
+            return Set.copyOf(documents.values());
         }
     }
 

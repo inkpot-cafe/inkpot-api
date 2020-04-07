@@ -1,6 +1,7 @@
 package com.inkpot.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.inkpot.core.CoreContext;
 import com.inkpot.core.Document;
 import com.inkpot.core.Store;
 import org.junit.jupiter.api.Test;
@@ -14,11 +15,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -30,6 +32,9 @@ public class DocumentControllerTest {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private CoreContext coreContext;
 
     @SpyBean
     private Store store;
@@ -83,7 +88,23 @@ public class DocumentControllerTest {
                 .andExpect(status().isOk());
 
         verify(store).delete(eq(uuid));
-        // TODO context should delete uuid and not document
+    }
 
+    @Test
+    void readAllDocuments() throws Exception {
+        Document document1 = coreContext.newDocument("title", "author");
+        Document document2 = coreContext.newDocument("title", "author");
+
+        coreContext.saveDocument(document1);
+        coreContext.saveDocument(document2);
+
+        mvc.perform(get("/documents")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().
+                        string(both(containsString(mapper.writeValueAsString(document1)))
+                                .and(containsString(mapper.writeValueAsString(document2)))));
+
+        verify(store).readAll();
     }
 }

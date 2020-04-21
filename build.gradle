@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'war'
     id 'org.springframework.boot' version '2.2.5.RELEASE'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 }
@@ -14,8 +14,9 @@ repositories {
 dependencies {
     compile 'com.inkpot:inkpot-core:1.0-SNAPSHOT'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'

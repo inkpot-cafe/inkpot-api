@@ -2,8 +2,8 @@ package com.inkpot.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inkpot.core.CoreContext;
-import com.inkpot.core.Document;
-import com.inkpot.core.Store;
+import com.inkpot.core.domain.Document;
+import com.inkpot.core.domain.Store;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;

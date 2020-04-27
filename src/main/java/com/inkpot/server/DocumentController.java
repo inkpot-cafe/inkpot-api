@@ -1,7 +1,7 @@
 package com.inkpot.server;
 
 import com.inkpot.core.CoreContext;
-import com.inkpot.core.Document;
+import com.inkpot.core.domain.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

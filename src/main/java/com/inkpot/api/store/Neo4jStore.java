@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
 import static org.neo4j.driver.Values.parameters;
 
 @Repository
-public class Neo4JStore implements DocumentStore, AutoCloseable {
+public class Neo4jStore implements DocumentStore, AutoCloseable {
 
     private final Driver driver;
 
     @Autowired
-    public Neo4JStore(Driver driver) {
+    public Neo4jStore(Driver driver) {
         this.driver = driver;
     }
 
@@ -43,7 +43,10 @@ public class Neo4JStore implements DocumentStore, AutoCloseable {
                         "WHERE d.uuid = $uuid " +
                         "RETURN properties(d)",
                 parameters("uuid", uuid.toString()),
-                result -> result.hasNext() ? toDocumentDto(result.single()) : null
+                result -> result.stream()
+                        .findFirst()
+                        .map(this::toDocumentDto)
+                        .orElse(null)
         );
     }
 

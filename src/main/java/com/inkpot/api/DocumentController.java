@@ -1,4 +1,4 @@
-package com.inkpot.server;
+package com.inkpot.api;
 
 import com.inkpot.core.CoreContext;
 import com.inkpot.core.domain.Document;
@@ -11,33 +11,37 @@ import java.util.UUID;
 @RestController
 public class DocumentController {
 
+    private final CoreContext context;
+
     @Autowired
-    private CoreContext context;
+    public DocumentController(CoreContext context) {
+        this.context = context;
+    }
 
     @GetMapping("/documents")
     public Set<Document> readAllDocuments() {
-        return context.readAllDocuments();
+        return context.findAllDocuments();
     }
 
     @PostMapping("/document")
     public UUID createDocument(@RequestBody CreateDocument createDocument) {
-        Document document = context.newDocument(createDocument.getTitle(), createDocument.getAuthor());
-        document.write(createDocument.getContent());
+        Document document = context.documentBuilder()
+                .title(createDocument.getTitle())
+                .author(createDocument.getAuthor())
+                .content(createDocument.getContent())
+                .build();
         context.saveDocument(document);
         return document.getUuid();
     }
 
     @GetMapping("/document")
     public Document readDocument(@RequestParam UUID uuid) {
-        return context.readDocument(uuid);
+        return context.findDocument(uuid);
     }
 
     @DeleteMapping("/document")
     public void deleteDocument(@RequestParam UUID uuid) {
-        Document document = context.readDocument(uuid);
-        if (document != null) {
-            context.deleteDocument(document);
-        }
+        context.deleteDocument(uuid);
     }
 
 }

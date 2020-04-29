@@ -20,28 +20,28 @@ public class DocumentController {
 
     @GetMapping("/documents")
     public Set<Document> readAllDocuments() {
-        return context.findAllDocuments();
+        return context.documentRepository().findAll();
     }
 
     @PostMapping("/document")
     public UUID createDocument(@RequestBody CreateDocument createDocument) {
-        Document document = context.documentBuilder()
+        var document = context.documentBuilder()
                 .title(createDocument.getTitle())
                 .author(createDocument.getAuthor())
                 .content(createDocument.getContent())
                 .build();
-        context.saveDocument(document);
+        context.documentRepository().save(document);
         return document.getUuid();
     }
 
     @GetMapping("/document")
     public Document readDocument(@RequestParam UUID uuid) {
-        return context.findDocument(uuid);
+        return context.documentRepository().find(uuid);
     }
 
     @DeleteMapping("/document")
     public void deleteDocument(@RequestParam UUID uuid) {
-        context.deleteDocument(uuid);
+        context.documentRepository().delete(uuid);
     }
 
 }

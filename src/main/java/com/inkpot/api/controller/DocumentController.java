@@ -1,4 +1,4 @@
-package com.inkpot.api;
+package com.inkpot.api.controller;
 
 import com.inkpot.core.CoreContext;
 import com.inkpot.core.domain.Document;

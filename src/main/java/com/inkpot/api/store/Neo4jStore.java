@@ -29,9 +29,9 @@ public class Neo4jStore implements DocumentStore, AutoCloseable {
     public void save(@NonNull DocumentDto document) {
         writeTransaction(
                 "CREATE (d:Document { uuid: $uuid, title: $title, author: $author, content: $content })",
-                parameters("author", document.getAuthor(),
+                parameters("uuid", document.getUuid().toString(),
+                        "author", document.getAuthor(),
                         "title", document.getTitle(),
-                        "uuid", document.getUuid().toString(),
                         "content", document.getContent())
         );
     }
@@ -50,6 +50,17 @@ public class Neo4jStore implements DocumentStore, AutoCloseable {
         );
     }
 
+    @NonNull
+    @Override
+    public Set<DocumentDto> findAll() {
+        return readTransaction(
+                "MATCH (d:Document) RETURN properties(d)",
+                result -> result.stream()
+                        .map(this::toDocumentDto)
+                        .collect(Collectors.toSet())
+        );
+    }
+
     @Override
     public void delete(@NonNull UUID uuid) {
         writeTransaction(
@@ -57,17 +68,6 @@ public class Neo4jStore implements DocumentStore, AutoCloseable {
                         "WHERE d.uuid = $uuid " +
                         "DELETE d",
                 parameters("uuid", uuid.toString())
-        );
-    }
-
-    @Override
-    @NonNull
-    public Set<DocumentDto> findAll() {
-        return readTransaction(
-                "MATCH (d:Document) RETURN properties(d)",
-                result -> result.stream()
-                        .map(this::toDocumentDto)
-                        .collect(Collectors.toSet())
         );
     }
 

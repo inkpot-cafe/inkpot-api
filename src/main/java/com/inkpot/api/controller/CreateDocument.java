@@ -1,4 +1,4 @@
-package com.inkpot.api;
+package com.inkpot.api.controller;
 
 public class CreateDocument {
 

@@ -86,6 +86,25 @@ class Neo4jStoreTest {
     }
 
     @Test
+    void findNoResults() {
+        // given
+        Stream<Record> stream = Stream.empty();
+        when(result.stream()).thenReturn(stream);
+
+        // when
+        DocumentDto documentDto = store.find(RANDOM_UUID);
+
+        // then
+        verify(transaction).run(
+                eq("MATCH (d:Document) WHERE d.uuid = $uuid RETURN properties(d)"),
+                eq(parameters("uuid", RANDOM_UUID.toString()))
+        );
+
+        DocumentDto expected = new DocumentDto(RANDOM_UUID, AUTHOR, TITLE, CONTENT);
+        assertThat(documentDto).isNull();
+    }
+
+    @Test
     void findAll() {
         // given
         UUID uuid0 = UUID.randomUUID();

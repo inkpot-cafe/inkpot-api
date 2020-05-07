@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-class DocumentControllerTest {
+class DocumentsControllerTest {
 
     static final String TITLE = "title";
     static final String AUTHOR = "author";
@@ -37,7 +37,7 @@ class DocumentControllerTest {
     CoreContext coreContext;
 
     @Autowired
-    DocumentController documentController;
+    DocumentsController documentsController;
 
     @BeforeEach
     void setUp() {
@@ -54,7 +54,7 @@ class DocumentControllerTest {
         when(documentFactory.create()).thenReturn(document);
 
         // when
-        ResponseEntity<Document> responseEntity = documentController.createDocument(createDocument(TITLE, AUTHOR, CONTENT));
+        ResponseEntity<Document> responseEntity = documentsController.createDocument(createDocument(TITLE, AUTHOR, CONTENT));
 
         // then
         verify(documentRepository).save(document);
@@ -69,7 +69,7 @@ class DocumentControllerTest {
         when(documentRepository.find(eq(RANDOM_UUID))).thenReturn(document);
 
         // when
-        ResponseEntity<Document> responseEntity = documentController.findDocument(RANDOM_UUID);
+        ResponseEntity<Document> responseEntity = documentsController.findDocument(RANDOM_UUID);
 
         // then
         verify(documentRepository).find(RANDOM_UUID);
@@ -83,7 +83,7 @@ class DocumentControllerTest {
         when(documentRepository.find(eq(RANDOM_UUID))).thenReturn(null);
 
         // when
-        ResponseEntity<Document> responseEntity = documentController.findDocument(RANDOM_UUID);
+        ResponseEntity<Document> responseEntity = documentsController.findDocument(RANDOM_UUID);
 
         // then
         verify(documentRepository).find(RANDOM_UUID);
@@ -98,7 +98,7 @@ class DocumentControllerTest {
         when(documentRepository.findAll()).thenReturn(Set.of(document0, document1));
 
         // when
-        ResponseEntity<Set<Document>> responseEntity = documentController.findAllDocuments();
+        ResponseEntity<Set<Document>> responseEntity = documentsController.findAllDocuments();
 
         // then
         verify(documentRepository).findAll();
@@ -109,7 +109,7 @@ class DocumentControllerTest {
     @Test
     void deleteDocument() {
         // when
-        ResponseEntity<Void> responseEntity = documentController.deleteDocument(RANDOM_UUID);
+        ResponseEntity<Void> responseEntity = documentsController.deleteDocument(RANDOM_UUID);
 
         // then
         verify(documentRepository).delete(RANDOM_UUID);

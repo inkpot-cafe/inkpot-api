@@ -12,17 +12,17 @@ import java.util.Set;
 import java.util.UUID;
 
 @RestController
-public class DocumentController {
+@RequestMapping("documents")
+public class DocumentsController {
 
     private final CoreContext context;
 
     @Autowired
-    public DocumentController(CoreContext context) {
+    public DocumentsController(CoreContext context) {
         this.context = context;
     }
 
     @PostMapping(
-            value = "/document",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -37,24 +37,23 @@ public class DocumentController {
     }
 
     @GetMapping(
-            value = "/document",
+            value = "/{uuid}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Document> findDocument(@RequestParam UUID uuid) {
+    public ResponseEntity<Document> findDocument(@PathVariable UUID uuid) {
         Optional<Document> document = Optional.ofNullable(context.documentRepository().find(uuid));
         return ResponseEntity.of(document);
     }
 
     @GetMapping(
-            value = "/documents",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Set<Document>>findAllDocuments() {
         return ResponseEntity.ok(context.documentRepository().findAll());
     }
 
-    @DeleteMapping("/document")
-    public ResponseEntity<Void> deleteDocument(@RequestParam UUID uuid) {
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<Void> deleteDocument(@PathVariable UUID uuid) {
         context.documentRepository().delete(uuid);
         return ResponseEntity.ok().build();
     }

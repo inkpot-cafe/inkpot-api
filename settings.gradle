@@ -1,3 +1,2 @@
 rootProject.name = 'inkpot-api'
 includeBuild 'inkpot-core'
-

@@ -1,1 +1,1 @@
-`./gradlew bootRun`
+`./gradlew --console plain bootRun`

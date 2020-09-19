@@ -14,7 +14,7 @@ name: Build and Deploy to GKE
 
 on:
   release:
-    types: [created]
+    types: [created, published]
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}

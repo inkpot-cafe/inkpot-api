@@ -13,14 +13,15 @@
 name: Build and Deploy to GKE
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - master
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: cluster-1    # TODO: update to cluster name
-  GKE_ZONE: europe-west1-b  # TODO: update to cluster zone
-  DEPLOYMENT_NAME: gke-test # TODO: update to deployment name
+  GKE_CLUSTER: inkpot-cluster-1
+  GKE_ZONE: europe-west1-b
+  DEPLOYMENT_NAME: gke
   IMAGE: inkpot-api
 
 jobs:

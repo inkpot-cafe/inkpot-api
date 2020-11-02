@@ -11,4 +11,4 @@ spec:
       protocol: TCP
       targetPort: 8080
   selector:
-    app: inkpot-web-deployment
+    app: inkpot-api-deployment

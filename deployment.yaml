@@ -9,10 +9,23 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: inkpot-web-deployment
+      app: inkpot-api-deployment
+  template:
+    metadata:
+      labels:
+        app: inkpot-api-deployment
     spec:
       containers:
         - image: gcr.io/PROJECT_ID/IMAGE:TAG
+          imagePullPolicy: IfNotPresent
+          name: inkpot-api-deployment
           ports:
             - containerPort: 8080
               protocol: TCP
+          volumeMounts:
+            - mountPath: /neo
+              name: inkpot-pd
+      volumes:
+        - name: inkpot-pd
+          persistentVolumeClaim:
+            claimName: inkpot-pvc

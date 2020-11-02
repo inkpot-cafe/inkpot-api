@@ -21,7 +21,7 @@ env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: inkpot-cluster-1
   GKE_ZONE: europe-west1-b
-  DEPLOYMENT_NAME: gke
+  DEPLOYMENT_NAME: inkpot-api-deployment
   IMAGE: inkpot-api
 
 jobs:

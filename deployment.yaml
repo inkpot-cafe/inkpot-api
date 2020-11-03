@@ -16,7 +16,7 @@ spec:
         app: inkpot-api-deployment
     spec:
       containers:
-        - image: gcr.io/PROJECT_ID/IMAGE:TAG
+        - image: eu.gcr.io/PROJECT_ID/IMAGE:TAG
           imagePullPolicy: IfNotPresent
           name: inkpot-api-deployment
           ports:

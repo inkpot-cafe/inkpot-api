@@ -18,6 +18,15 @@ import static org.neo4j.driver.Values.parameters;
 @Repository
 public class Neo4jStore implements DocumentStore, AutoCloseable {
 
+    public static final String CREATE_DOCUMENT = "CREATE (d:Document { uuid: $uuid, title: $title, author: $author, content: $content })";
+    public static final String FIND_DOCUMENT = "MATCH (d:Document) WHERE d.uuid = $uuid RETURN properties(d)";
+    public static final String FIND_ALL_DOCUMENTS = "MATCH (d:Document) RETURN properties(d)";
+    public static final String DELETE_DOCUMENT = "MATCH (d:Document) WHERE d.uuid = $uuid DELETE d";
+    public static final String UUID_PARAMETER = "uuid";
+    public static final String AUTHOR_PARAMETER = "author";
+    public static final String TITLE_PARAMETER = "title";
+    public static final String CONTENT_PARAMETER = "content";
+
     private final Driver driver;
 
     @Autowired
@@ -28,21 +37,19 @@ public class Neo4jStore implements DocumentStore, AutoCloseable {
     @Override
     public void save(@NonNull DocumentDto document) {
         writeTransaction(
-                "CREATE (d:Document { uuid: $uuid, title: $title, author: $author, content: $content })",
-                parameters("uuid", document.getUuid().toString(),
-                        "author", document.getAuthor(),
-                        "title", document.getTitle(),
-                        "content", document.getContent())
+                CREATE_DOCUMENT,
+                parameters(UUID_PARAMETER, document.getUuid().toString(),
+                        AUTHOR_PARAMETER, document.getAuthor(),
+                        TITLE_PARAMETER, document.getTitle(),
+                        CONTENT_PARAMETER, document.getContent())
         );
     }
 
     @Override
     public DocumentDto find(@NonNull UUID uuid) {
         return readTransaction(
-                "MATCH (d:Document) " +
-                        "WHERE d.uuid = $uuid " +
-                        "RETURN properties(d)",
-                parameters("uuid", uuid.toString()),
+                FIND_DOCUMENT,
+                parameters(UUID_PARAMETER, uuid.toString()),
                 result -> result.stream()
                         .findFirst()
                         .map(this::toDocumentDto)
@@ -54,7 +61,7 @@ public class Neo4jStore implements DocumentStore, AutoCloseable {
     @Override
     public Set<DocumentDto> findAll() {
         return readTransaction(
-                "MATCH (d:Document) RETURN properties(d)",
+                FIND_ALL_DOCUMENTS,
                 result -> result.stream()
                         .map(this::toDocumentDto)
                         .collect(Collectors.toSet())
@@ -64,10 +71,8 @@ public class Neo4jStore implements DocumentStore, AutoCloseable {
     @Override
     public void delete(@NonNull UUID uuid) {
         writeTransaction(
-                "MATCH (d:Document) " +
-                        "WHERE d.uuid = $uuid " +
-                        "DELETE d",
-                parameters("uuid", uuid.toString())
+                DELETE_DOCUMENT,
+                parameters(UUID_PARAMETER, uuid.toString())
         );
     }
 

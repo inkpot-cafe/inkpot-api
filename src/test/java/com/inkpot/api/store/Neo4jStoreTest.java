@@ -58,11 +58,11 @@ class Neo4jStoreTest {
 
         // then
         verify(transaction).run(
-                eq("CREATE (d:Document { uuid: $uuid, title: $title, author: $author, content: $content })"),
-                eq(parameters("uuid", RANDOM_UUID.toString(),
-                        "author", AUTHOR,
-                        "title", TITLE,
-                        "content", CONTENT))
+                eq(Neo4jStore.CREATE_DOCUMENT),
+                eq(parameters(Neo4jStore.UUID_PARAMETER, RANDOM_UUID.toString(),
+                        Neo4jStore.AUTHOR_PARAMETER, AUTHOR,
+                        Neo4jStore.TITLE_PARAMETER, TITLE,
+                        Neo4jStore.CONTENT_PARAMETER, CONTENT))
         );
     }
 
@@ -77,8 +77,8 @@ class Neo4jStoreTest {
 
         // then
         verify(transaction).run(
-                eq("MATCH (d:Document) WHERE d.uuid = $uuid RETURN properties(d)"),
-                eq(parameters("uuid", RANDOM_UUID.toString()))
+                eq(Neo4jStore.FIND_DOCUMENT),
+                eq(parameters(Neo4jStore.UUID_PARAMETER, RANDOM_UUID.toString()))
         );
 
         DocumentDto expected = new DocumentDto(RANDOM_UUID, AUTHOR, TITLE, CONTENT);
@@ -96,8 +96,8 @@ class Neo4jStoreTest {
 
         // then
         verify(transaction).run(
-                eq("MATCH (d:Document) WHERE d.uuid = $uuid RETURN properties(d)"),
-                eq(parameters("uuid", RANDOM_UUID.toString()))
+                eq(Neo4jStore.FIND_DOCUMENT),
+                eq(parameters(Neo4jStore.UUID_PARAMETER, RANDOM_UUID.toString()))
         );
 
         DocumentDto expected = new DocumentDto(RANDOM_UUID, AUTHOR, TITLE, CONTENT);
@@ -116,7 +116,7 @@ class Neo4jStoreTest {
         Set<DocumentDto> documentDtoSet = store.findAll();
 
         // then
-        verify(transaction).run(eq("MATCH (d:Document) RETURN properties(d)"));
+        verify(transaction).run(eq(Neo4jStore.FIND_ALL_DOCUMENTS));
 
         DocumentDto expected0 = new DocumentDto(uuid0, AUTHOR, TITLE, CONTENT);
         DocumentDto expected1 = new DocumentDto(uuid1, AUTHOR, TITLE, CONTENT);
@@ -130,8 +130,8 @@ class Neo4jStoreTest {
 
         // then
         verify(transaction).run(
-                eq("MATCH (d:Document) WHERE d.uuid = $uuid DELETE d"),
-                eq(parameters("uuid", RANDOM_UUID.toString()))
+                eq(Neo4jStore.DELETE_DOCUMENT),
+                eq(parameters(Neo4jStore.UUID_PARAMETER, RANDOM_UUID.toString()))
         );
 
         verify(session).close();
@@ -171,10 +171,10 @@ class Neo4jStoreTest {
         Record record = mock(Record.class);
         Value value = mock(Value.class);
 
-        addValue(value, "uuid", uuid.toString());
-        addValue(value, "author", AUTHOR);
-        addValue(value, "title", TITLE);
-        addValue(value, "content", CONTENT);
+        addValue(value, Neo4jStore.UUID_PARAMETER, uuid.toString());
+        addValue(value, Neo4jStore.AUTHOR_PARAMETER, AUTHOR);
+        addValue(value, Neo4jStore.TITLE_PARAMETER, TITLE);
+        addValue(value, Neo4jStore.CONTENT_PARAMETER, CONTENT);
 
         when(record.get(eq(0))).thenReturn(value);
         return record;

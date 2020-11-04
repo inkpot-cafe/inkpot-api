@@ -18,7 +18,7 @@ configurations {
 }
 
 dependencies {
-    compile 'com.inkpot:inkpot-core:1.0-SNAPSHOT'
+    implementation project(':inkpot-core')
     compile 'org.neo4j.driver:neo4j-java-driver:4.1.1'
     compile "org.neo4j:neo4j:4.1.1"
     compile 'org.springframework.boot:spring-boot-starter-log4j2'

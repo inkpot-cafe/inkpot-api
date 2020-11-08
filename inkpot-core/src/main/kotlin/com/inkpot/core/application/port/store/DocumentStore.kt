@@ -1,4 +1,4 @@
-package com.inkpot.core.store
+package com.inkpot.core.application.port.store
 
 import java.util.*
 
@@ -8,3 +8,10 @@ interface DocumentStore {
     fun findAll(): Set<DocumentDto>
     fun delete(uuid: UUID)
 }
+
+data class DocumentDto(
+        val uuid: UUID,
+        val author: String,
+        val title: String,
+        val content: String
+)

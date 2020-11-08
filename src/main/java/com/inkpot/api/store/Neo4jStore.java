@@ -1,7 +1,7 @@
 package com.inkpot.api.store;
 
-import com.inkpot.core.store.DocumentDto;
-import com.inkpot.core.store.DocumentStore;
+import com.inkpot.core.application.port.store.DocumentDto;
+import com.inkpot.core.application.port.store.DocumentStore;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.*;
 import org.springframework.beans.factory.annotation.Autowired;

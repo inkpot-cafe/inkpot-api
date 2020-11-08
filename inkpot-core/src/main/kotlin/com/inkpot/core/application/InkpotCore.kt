@@ -1,6 +1,6 @@
-package com.inkpot.core
+package com.inkpot.core.application
 
-import com.inkpot.core.store.DocumentStore
+import com.inkpot.core.application.port.store.DocumentStore
 
 object InkpotCore {
 

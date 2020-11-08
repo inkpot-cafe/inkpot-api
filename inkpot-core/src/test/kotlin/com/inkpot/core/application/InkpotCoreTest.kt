@@ -1,6 +1,6 @@
-package com.inkpot.core
+package com.inkpot.core.application
 
-import com.inkpot.core.store.DocumentStore
+import com.inkpot.core.application.port.store.DocumentStore
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test

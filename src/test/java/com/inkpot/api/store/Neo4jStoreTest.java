@@ -4,7 +4,9 @@ import com.inkpot.core.store.DocumentDto;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.*;
 
@@ -34,14 +36,15 @@ class Neo4jStoreTest {
     @Mock
     Result result;
 
-    @Inject
+    @Mock
     Driver driver;
 
-    @Inject
+    @InjectMocks
     Neo4jStore store;
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.initMocks(this);
         setUpDriver();
         setUpSession();
         setUpTransaction();

@@ -2,60 +2,54 @@ package com.inkpot.api.controller;
 
 import com.inkpot.core.CoreContext;
 import com.inkpot.core.domain.Document;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
-@RestController
-@RequestMapping("documents")
+@Path("documents")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class DocumentsController {
 
     private final CoreContext context;
 
-    @Autowired
+    @Inject
     public DocumentsController(CoreContext context) {
         this.context = context;
     }
 
-    @PostMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<Document> createDocument(@RequestBody CreateDocument createDocument) {
+    @POST
+    public Response createDocument(CreateDocument createDocument) {
         var document = context.documentFactory()
                 .title(createDocument.getTitle())
                 .author(createDocument.getAuthor())
                 .content(createDocument.getContent())
                 .create();
         context.documentRepository().save(document);
-        return ResponseEntity.ok(document);
+        return Response.ok(document).build();
     }
 
-    @GetMapping(
-            value = "/{uuid}",
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<Document> findDocument(@PathVariable UUID uuid) {
+    @GET
+    @Path("/{uuid}")
+    public Response findDocument(@PathParam("uuid") UUID uuid) {
         Optional<Document> document = Optional.ofNullable(context.documentRepository().find(uuid));
-        return ResponseEntity.of(document);
+        return document.map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
     }
 
-    @GetMapping(
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<Set<Document>>findAllDocuments() {
-        return ResponseEntity.ok(context.documentRepository().findAll());
+    @GET
+    public Response findAllDocuments() {
+        return Response.ok(context.documentRepository().findAll()).build();
     }
 
-    @DeleteMapping("/{uuid}")
-    public ResponseEntity<Void> deleteDocument(@PathVariable UUID uuid) {
+    @DELETE
+    @Path("/{uuid}")
+    public Response deleteDocument(@PathParam("uuid") UUID uuid) {
         context.documentRepository().delete(uuid);
-        return ResponseEntity.ok().build();
+        return Response.ok().build();
     }
 
 }

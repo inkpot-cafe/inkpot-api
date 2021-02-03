@@ -7,16 +7,16 @@ import org.neo4j.dbms.api.DatabaseManagementService;
 import org.neo4j.dbms.api.DatabaseManagementServiceBuilder;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Produces;
 import java.io.File;
 import java.time.Duration;
 
-@Configuration
+@Dependent
 public class Neo4jStoreConfig {
 
-    @Bean
+    @Produces
     public Driver driver() {
         DatabaseManagementService managementService = new DatabaseManagementServiceBuilder( new File("neo"))
                 .setConfig( BoltConnector.enabled, true )

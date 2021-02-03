@@ -3,15 +3,14 @@ package com.inkpot.api;
 import com.inkpot.core.CoreContext;
 import com.inkpot.core.InkpotCore;
 import com.inkpot.core.store.DocumentStore;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+@ApplicationScoped
 public class InkpotCoreConfig {
 
-    @Bean
-    @Autowired
+    @Inject
     public CoreContext coreContext(DocumentStore store) {
         return InkpotCore.createContext(store);
     }

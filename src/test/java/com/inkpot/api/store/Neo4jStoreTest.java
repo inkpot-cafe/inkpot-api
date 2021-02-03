@@ -1,15 +1,14 @@
 package com.inkpot.api.store;
 
 import com.inkpot.core.store.DocumentDto;
+import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
+import javax.inject.Inject;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -18,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.neo4j.driver.Values.parameters;
 
-@SpringBootTest
+@QuarkusTest
 class Neo4jStoreTest {
 
     static final UUID RANDOM_UUID = UUID.randomUUID();
@@ -35,10 +34,10 @@ class Neo4jStoreTest {
     @Mock
     Result result;
 
-    @MockBean
+    @Inject
     Driver driver;
 
-    @Autowired
+    @Inject
     Neo4jStore store;
 
     @BeforeEach
@@ -156,13 +155,13 @@ class Neo4jStoreTest {
     private void setUpSession() {
         when(session.writeTransaction(any(TransactionWork.class)))
                 .then(invocation -> {
-                    TransactionWork<Value> work = invocation.getArgument(0);
+                    TransactionWork<Value> work = (TransactionWork<Value>)invocation.getArguments()[0];
                     return work.execute(transaction);
                 });
 
         when(session.readTransaction(any(TransactionWork.class)))
                 .then(invocation -> {
-                    TransactionWork<Value> work = invocation.getArgument(0);
+                    TransactionWork<Value> work = (TransactionWork<Value>)invocation.getArguments()[0];
                     return work.execute(transaction);
                 });
     }

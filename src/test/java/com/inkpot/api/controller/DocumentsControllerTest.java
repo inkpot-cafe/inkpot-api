@@ -11,8 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-
-import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import java.util.Set;
 import java.util.UUID;
@@ -34,7 +32,7 @@ class DocumentsControllerTest {
     @Mock
     DocumentRepository documentRepository;
 
-    @InjectMocks
+    @Mock
     CoreContext coreContext;
 
     @InjectMocks
@@ -60,7 +58,7 @@ class DocumentsControllerTest {
 
         // then
         verify(documentRepository).save(document);
-        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.OK);
+        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
         assertThat(responseEntity.getEntity()).isEqualTo(document);
     }
 
@@ -75,7 +73,7 @@ class DocumentsControllerTest {
 
         // then
         verify(documentRepository).find(RANDOM_UUID);
-        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.OK);
+        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
         assertThat(responseEntity.getEntity()).isEqualTo(document);
     }
 
@@ -89,7 +87,7 @@ class DocumentsControllerTest {
 
         // then
         verify(documentRepository).find(RANDOM_UUID);
-        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.NOT_FOUND);
+        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.NOT_FOUND.getStatusCode());
     }
 
     @Test
@@ -104,7 +102,7 @@ class DocumentsControllerTest {
 
         // then
         verify(documentRepository).findAll();
-        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.OK);
+        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
         assertThat((Set<Document>)responseEntity.getEntity()).hasSize(2).contains(document0, document1);
     }
 
@@ -115,7 +113,7 @@ class DocumentsControllerTest {
 
         // then
         verify(documentRepository).delete(RANDOM_UUID);
-        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.OK);
+        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
     }
 
     private void setUpCoreContext() {

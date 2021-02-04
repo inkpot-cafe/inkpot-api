@@ -4,22 +4,21 @@ import com.inkpot.core.CoreContext;
 import com.inkpot.core.domain.Document;
 import com.inkpot.core.domain.DocumentFactory;
 import com.inkpot.core.domain.DocumentRepository;
+import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.mockito.MockitoAnnotations;
 
+import javax.ws.rs.core.Response;
 import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@QuarkusTest
 class DocumentsControllerTest {
 
     static final String TITLE = "title";
@@ -33,14 +32,15 @@ class DocumentsControllerTest {
     @Mock
     DocumentRepository documentRepository;
 
-    @MockBean
+    @Mock
     CoreContext coreContext;
 
-    @Autowired
+    @InjectMocks
     DocumentsController documentsController;
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.initMocks(this);
         setUpCoreContext();
     }
 
@@ -54,12 +54,12 @@ class DocumentsControllerTest {
         when(documentFactory.create()).thenReturn(document);
 
         // when
-        ResponseEntity<Document> responseEntity = documentsController.createDocument(createDocument(TITLE, AUTHOR, CONTENT));
+        Response responseEntity = documentsController.createDocument(createDocument(TITLE, AUTHOR, CONTENT));
 
         // then
         verify(documentRepository).save(document);
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isEqualTo(document);
+        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
+        assertThat(responseEntity.getEntity()).isEqualTo(document);
     }
 
     @Test
@@ -69,12 +69,12 @@ class DocumentsControllerTest {
         when(documentRepository.find(eq(RANDOM_UUID))).thenReturn(document);
 
         // when
-        ResponseEntity<Document> responseEntity = documentsController.findDocument(RANDOM_UUID);
+        Response responseEntity = documentsController.findDocument(RANDOM_UUID);
 
         // then
         verify(documentRepository).find(RANDOM_UUID);
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isEqualTo(document);
+        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
+        assertThat(responseEntity.getEntity()).isEqualTo(document);
     }
 
     @Test
@@ -83,11 +83,11 @@ class DocumentsControllerTest {
         when(documentRepository.find(eq(RANDOM_UUID))).thenReturn(null);
 
         // when
-        ResponseEntity<Document> responseEntity = documentsController.findDocument(RANDOM_UUID);
+        Response responseEntity = documentsController.findDocument(RANDOM_UUID);
 
         // then
         verify(documentRepository).find(RANDOM_UUID);
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.NOT_FOUND.getStatusCode());
     }
 
     @Test
@@ -98,22 +98,22 @@ class DocumentsControllerTest {
         when(documentRepository.findAll()).thenReturn(Set.of(document0, document1));
 
         // when
-        ResponseEntity<Set<Document>> responseEntity = documentsController.findAllDocuments();
+        Response responseEntity = documentsController.findAllDocuments();
 
         // then
         verify(documentRepository).findAll();
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).hasSize(2).contains(document0, document1);
+        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
+        assertThat((Set<Document>)responseEntity.getEntity()).hasSize(2).contains(document0, document1);
     }
 
     @Test
     void deleteDocument() {
         // when
-        ResponseEntity<Void> responseEntity = documentsController.deleteDocument(RANDOM_UUID);
+        Response responseEntity = documentsController.deleteDocument(RANDOM_UUID);
 
         // then
         verify(documentRepository).delete(RANDOM_UUID);
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
     }
 
     private void setUpCoreContext() {

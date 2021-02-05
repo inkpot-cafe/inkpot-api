@@ -22,6 +22,8 @@ spec:
           resources:
             limits:
               cpu: 50m
+            requests:
+              cpu: 10m
           ports:
             - containerPort: 8080
               protocol: TCP

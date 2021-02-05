@@ -21,11 +21,11 @@ spec:
           name: inkpot-api-deployment
           resources:
             limits:
-              cpu: 50m
-              memory: 200Mi
+              cpu: 100m
+              memory: 256Mi
             requests:
-              cpu: 10m
-              memory: 90Mi
+              cpu: 50m
+              memory: 128Mi
           ports:
             - containerPort: 8080
               protocol: TCP

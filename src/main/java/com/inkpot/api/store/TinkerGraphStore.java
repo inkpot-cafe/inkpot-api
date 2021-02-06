@@ -66,6 +66,7 @@ public class TinkerGraphStore implements DocumentStore {
                 .property(AUTHOR, document.getAuthor())
                 .property(CONTENT, document.getContent())
                 .iterate();
+        LOGGER.info("Saved Document with id: {}", document.getUuid());
     }
 
     @Override
@@ -75,7 +76,6 @@ public class TinkerGraphStore implements DocumentStore {
                 .tryNext()
                 .map(toDocumentDto())
                 .orElse(null);
-
     }
 
     @Override
@@ -92,6 +92,7 @@ public class TinkerGraphStore implements DocumentStore {
         graph.traversal().V()
                 .as(DOCUMENT).hasId(uuid.toString())
                 .drop().iterate();
+        LOGGER.info("Deleted Document with id: {}", uuid);
     }
 
     private Function<Vertex, DocumentDto> toDocumentDto() {

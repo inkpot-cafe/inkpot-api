@@ -17,13 +17,19 @@ spec:
     spec:
       containers:
         - image: eu.gcr.io/PROJECT_ID/IMAGE:TAG
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: inkpot-api-deployment
+          resources:
+            limits:
+              cpu: 200m
+            requests:
+              cpu: 100m
+              memory: 128Mi
           ports:
             - containerPort: 8080
               protocol: TCP
           volumeMounts:
-            - mountPath: /neo
+            - mountPath: /data
               name: inkpot-pd
       volumes:
         - name: inkpot-pd

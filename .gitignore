@@ -1,4 +1,4 @@
-/neo
+*.kryo
 
 .DS_Store
 .idea

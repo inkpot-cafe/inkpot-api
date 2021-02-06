@@ -30,7 +30,6 @@ public class TinkerGraphStore implements DocumentStore {
     public static final String AUTHOR = "author";
     public static final String CONTENT = "content";
     public static final String DOCUMENT = "document";
-    public static final String ID = "id";
 
     @ConfigProperty(name = "tinkergraph.graphLocation")
     String graphLocation;

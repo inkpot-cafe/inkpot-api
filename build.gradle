@@ -17,8 +17,6 @@ dependencies {
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-resteasy'
 
-    implementation 'org.neo4j.driver:neo4j-java-driver:4.1.1'
-    implementation "org.neo4j:neo4j:4.1.1"
     implementation 'org.apache.tinkerpop:tinkergraph-gremlin:3.4.10'
 
     testImplementation 'io.quarkus:quarkus-junit5'

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - image: eu.gcr.io/PROJECT_ID/IMAGE:TAG
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: inkpot-api-deployment
           resources:
             limits:

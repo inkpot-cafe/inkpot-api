@@ -16,39 +16,31 @@ interface DocumentService {
 internal class InternalDocumentService(private val documentRepository: DocumentRepository) :
     DocumentService {
 
-    override fun createDocument(data: DocumentCreateData): Document {
-        val documentAggregate = DocumentAggregate(
+    override fun createDocument(data: DocumentCreateData) = toDocument(
+        DocumentAggregate(
             DocumentId(UUID.randomUUID()),
             data.author,
             data.title,
             data.content
-        )
-        documentRepository.save(documentAggregate)
-        return toDocument(documentAggregate)
-    }
+        ).also {
+            documentRepository.save(it)
+        }
+    )
 
-    override fun findDocument(uuid: UUID): Optional<Document> {
-        val documentAggregate = documentRepository.find(uuid)
-        return Optional.ofNullable(documentAggregate?.let { toDocument(it) })
-    }
+    override fun findDocument(uuid: UUID) = Optional.ofNullable(documentRepository.find(uuid)?.let { toDocument(it) })
 
-    override fun findAllDocuments(): Set<Document> {
-        val documentSet = documentRepository.findAll()
-        return documentSet.map { Document(it.id.uuid, it.author, it.title, it.content) }.toSet()
-    }
+    override fun findAllDocuments() = documentRepository.findAll().map { toDocument(it) }.toSet()
 
-    override fun deleteDocument(uuid: UUID) {
-        documentRepository.delete(uuid)
-    }
+    override fun deleteDocument(uuid: UUID) = documentRepository.delete(uuid)
 
-    private fun toDocument(documentAggregate: DocumentAggregate): Document {
-        return Document(
+    private fun toDocument(documentAggregate: DocumentAggregate) =
+        Document(
             documentAggregate.id.uuid,
             documentAggregate.author,
             documentAggregate.title,
             documentAggregate.content
         )
-    }
+
 }
 
 data class DocumentCreateData(

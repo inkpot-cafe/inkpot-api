@@ -7,19 +7,19 @@ import java.util.*
 
 interface AuthorService {
     fun createAuthor(data: AuthorCreateData): Author
+    fun findAuthor(uuid: UUID): Optional<Author>
 }
 
 internal class InternalAuthorService(private val authorRepository: AuthorRepository) : AuthorService {
 
-    override fun createAuthor(data: AuthorCreateData): Author {
-        val authorAggregate = AuthorAggregate(AuthorId(UUID.randomUUID()), data.name)
-        authorRepository.save(authorAggregate)
-        return toAuthor(authorAggregate)
-    }
+    override fun createAuthor(data: AuthorCreateData) = toAuthor(
+        AuthorAggregate(AuthorId(UUID.randomUUID()), data.name).also { authorRepository.save(it) }
+    )
 
-    private fun toAuthor(aggregate: AuthorAggregate): Author {
-        return Author(aggregate.id.uuid, aggregate.name)
-    }
+    override fun findAuthor(uuid: UUID) = Optional.ofNullable(authorRepository.find(uuid)?.let { toAuthor(it) })
+
+    private fun toAuthor(aggregate: AuthorAggregate) = Author(aggregate.id.uuid, aggregate.name)
+
 }
 
 data class Author(val uuid: UUID, val name: String)

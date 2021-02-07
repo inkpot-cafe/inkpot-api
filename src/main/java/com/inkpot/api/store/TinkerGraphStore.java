@@ -1,7 +1,7 @@
 package com.inkpot.api.store;
 
-import com.inkpot.core.store.DocumentDto;
-import com.inkpot.core.store.DocumentStore;
+import com.inkpot.core.application.port.store.DocumentDto;
+import com.inkpot.core.application.port.store.DocumentStore;
 import io.quarkus.runtime.Startup;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;

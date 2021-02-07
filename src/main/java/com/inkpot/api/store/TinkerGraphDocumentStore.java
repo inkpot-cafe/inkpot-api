@@ -25,9 +25,10 @@ import java.util.stream.Collectors;
 
 @Startup
 @ApplicationScoped
-public class TinkerGraphStore implements DocumentStore {
+public class TinkerGraphDocumentStore implements DocumentStore {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TinkerGraphStore.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TinkerGraphDocumentStore.class);
+
     public static final String TITLE = "title";
     public static final String AUTHOR = "author";
     public static final String CONTENT = "content";
@@ -38,7 +39,7 @@ public class TinkerGraphStore implements DocumentStore {
     private Graph graph;
 
     @Inject
-    public TinkerGraphStore(@ConfigProperty(name = "tinkergraph.graphLocation") Optional<String> graphLocation) {
+    public TinkerGraphDocumentStore(@ConfigProperty(name = "tinkergraph.graphLocation") Optional<String> graphLocation) {
         this.graphLocation = graphLocation;
     }
 
@@ -54,7 +55,7 @@ public class TinkerGraphStore implements DocumentStore {
     }
 
     @PreDestroy
-    public void shutdown() {
+    public void tearDown() {
         try {
             graph.close();
             LOGGER.info("TinkerGraph closed successfully");

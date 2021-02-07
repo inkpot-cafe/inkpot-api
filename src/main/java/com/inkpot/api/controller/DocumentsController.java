@@ -5,6 +5,7 @@ import com.inkpot.core.application.CoreContext;
 import com.inkpot.core.application.port.service.CreateDocument;
 import com.inkpot.core.application.port.service.Document;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Path("documents")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class DocumentsController {
 
     private final CoreContext context;

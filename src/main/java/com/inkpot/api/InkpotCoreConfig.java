@@ -13,6 +13,7 @@ public class InkpotCoreConfig {
 
     @Inject
     @Produces
+    @ApplicationScoped
     public CoreContext coreContext(DocumentStore store) {
         return InkpotCore.createContext(store);
     }

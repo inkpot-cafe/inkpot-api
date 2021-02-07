@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class InternalCoreContextTest {
+internal class CoreContextTest {
 
     lateinit var store: DocumentStore
-    lateinit var coreContext: InternalCoreContext
+    lateinit var coreContext: CoreContext
 
     @BeforeEach
     internal fun setUp() {

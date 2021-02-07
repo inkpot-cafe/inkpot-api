@@ -16,13 +16,15 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@ApplicationScoped
 @Startup
+@ApplicationScoped
 public class TinkerGraphStore implements DocumentStore {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TinkerGraphStore.class);
@@ -31,16 +33,20 @@ public class TinkerGraphStore implements DocumentStore {
     public static final String CONTENT = "content";
     public static final String DOCUMENT = "document";
 
-    @ConfigProperty(name = "tinkergraph.graphLocation")
-    String graphLocation;
+    private final Optional<String> graphLocation;
 
     private Graph graph;
+
+    @Inject
+    public TinkerGraphStore(@ConfigProperty(name = "tinkergraph.graphLocation") Optional<String> graphLocation) {
+        this.graphLocation = graphLocation;
+    }
 
     @PostConstruct
     public void startUp() {
         Configuration configuration = new BaseConfiguration();
         configuration.setProperty(Graph.GRAPH, "org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph");
-        configuration.setProperty("gremlin.tinkergraph.graphLocation", graphLocation);
+        configuration.setProperty("gremlin.tinkergraph.graphLocation", graphLocation.orElse(""));
         configuration.setProperty("gremlin.tinkergraph.graphFormat", "gryo");
         graph = TinkerGraph.open(configuration);
         LOGGER.info("TinkerGraph created");

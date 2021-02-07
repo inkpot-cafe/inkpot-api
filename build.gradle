@@ -17,13 +17,18 @@ dependencies {
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-resteasy'
 
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.quarkus:quarkus-junit5-mockito'
+
     implementation 'org.apache.tinkerpop:tinkergraph-gremlin:3.4.10'
 
-    testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'org.assertj:assertj-core:3.9.1'
 
+    testImplementation 'io.rest-assured:rest-assured:4.3.3'
+
+    testImplementation 'org.json:json:20201115'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
-    testImplementation 'org.mockito:mockito-all:1.10.19'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 }
 

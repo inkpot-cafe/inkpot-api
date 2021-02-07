@@ -6,6 +6,7 @@ interface AuthorStore {
     fun save(authorDto: AuthorDto)
     fun find(uuid: UUID): Optional<AuthorDto>
     fun findAll(): Set<AuthorDto>
+    fun delete(uuid: UUID)
 }
 
 data class AuthorDto(val uuid: UUID, val name: String)

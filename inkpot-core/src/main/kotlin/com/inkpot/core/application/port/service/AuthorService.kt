@@ -9,6 +9,7 @@ interface AuthorService {
     fun createAuthor(data: AuthorCreateData): Author
     fun findAuthor(uuid: UUID): Optional<Author>
     fun findAllAuthors(): Set<Author>
+    fun delete(uuid: UUID)
 }
 
 internal class InternalAuthorService(private val authorRepository: AuthorRepository) : AuthorService {
@@ -18,7 +19,10 @@ internal class InternalAuthorService(private val authorRepository: AuthorReposit
     )
 
     override fun findAuthor(uuid: UUID) = Optional.ofNullable(authorRepository.find(uuid)?.let { toAuthor(it) })
+
     override fun findAllAuthors() = authorRepository.findAll().map { toAuthor(it) }.toSet()
+
+    override fun delete(uuid: UUID) = authorRepository.delete(uuid)
 
     private fun toAuthor(aggregate: AuthorAggregate) = Author(aggregate.id.uuid, aggregate.name)
 

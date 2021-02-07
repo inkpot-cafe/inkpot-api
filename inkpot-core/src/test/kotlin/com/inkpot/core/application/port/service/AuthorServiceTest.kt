@@ -85,4 +85,14 @@ internal class AuthorServiceTest {
         assertEquals(uuid, authors.elementAt(0).uuid)
         assertEquals(NAME, authors.elementAt(0).name)
     }
+
+    @Test
+    internal fun `delete author`() {
+        val uuid = UUID.randomUUID()
+
+        authorService.delete(uuid)
+
+        verify(authorStore).delete(uuid)
+    }
+
 }

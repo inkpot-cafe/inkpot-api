@@ -7,21 +7,21 @@ import java.util.*
 
 
 interface DocumentService {
-    fun createDocument(createDocument: CreateDocument): Document
+    fun createDocument(data: DocumentCreateData): Document
     fun findDocument(uuid: UUID): Optional<Document>
     fun findAllDocuments(): Set<Document>
     fun deleteDocument(uuid: UUID)
 }
 
-internal class InternalDocumentService internal constructor(private val documentRepository: DocumentRepository) :
+internal class InternalDocumentService(private val documentRepository: DocumentRepository) :
     DocumentService {
 
-    override fun createDocument(createDocument: CreateDocument): Document {
+    override fun createDocument(data: DocumentCreateData): Document {
         val documentAggregate = DocumentAggregate(
             DocumentId(UUID.randomUUID()),
-            createDocument.author,
-            createDocument.title,
-            createDocument.content
+            data.author,
+            data.title,
+            data.content
         )
         documentRepository.save(documentAggregate)
         return toDocument(documentAggregate)
@@ -41,18 +41,17 @@ internal class InternalDocumentService internal constructor(private val document
         documentRepository.delete(uuid)
     }
 
+    private fun toDocument(documentAggregate: DocumentAggregate): Document {
+        return Document(
+            documentAggregate.id.uuid,
+            documentAggregate.author,
+            documentAggregate.title,
+            documentAggregate.content
+        )
+    }
 }
 
-private fun toDocument(documentAggregate: DocumentAggregate): Document {
-    return Document(
-        documentAggregate.id.uuid,
-        documentAggregate.author,
-        documentAggregate.title,
-        documentAggregate.content
-    )
-}
-
-data class CreateDocument(
+data class DocumentCreateData(
     var author: String,
     var title: String,
     var content: String

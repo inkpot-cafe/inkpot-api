@@ -7,8 +7,6 @@ internal data class DocumentAggregate(
     var author: String,
     var title: String,
     var content: String
-) {
-
-}
+)
 
 internal data class DocumentId(val uuid: UUID)

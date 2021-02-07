@@ -14,8 +14,8 @@ public class InkpotCoreConfig {
     @Inject
     @Produces
     @ApplicationScoped
-    public CoreContext coreContext(DocumentStore store) {
-        return InkpotCore.createContext(store);
+    public CoreContext coreContext(DocumentStore documentStore) {
+        return InkpotCore.createContext(null, documentStore);
     }
 
 }

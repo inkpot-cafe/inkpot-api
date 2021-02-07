@@ -2,7 +2,7 @@ package com.inkpot.api.controller;
 
 import com.inkpot.api.controller.request.CreateDocumentRequest;
 import com.inkpot.core.application.CoreContext;
-import com.inkpot.core.application.port.service.CreateDocument;
+import com.inkpot.core.application.port.service.DocumentCreateData;
 import com.inkpot.core.application.port.service.Document;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -51,8 +51,8 @@ public class DocumentsController {
         return Response.ok().build();
     }
 
-    private CreateDocument toCreateDocument(CreateDocumentRequest request) {
-        return new CreateDocument(
+    private DocumentCreateData toCreateDocument(CreateDocumentRequest request) {
+        return new DocumentCreateData(
                 request.getAuthor(),
                 request.getTitle(),
                 request.getContent()

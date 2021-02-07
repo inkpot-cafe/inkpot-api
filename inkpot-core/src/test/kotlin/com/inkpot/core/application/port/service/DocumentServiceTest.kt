@@ -26,12 +26,12 @@ internal class DocumentServiceTest {
     @BeforeEach
     internal fun setUp() {
         documentStore = mock()
-        documentService = InkpotCore.createContext(documentStore).documentService()
+        documentService = InkpotCore.createContext(mock(), documentStore).documentService()
     }
 
     @Test
     internal fun createDocument() {
-        val createDocument = CreateDocument(AUTHOR, TITLE, CONTENT)
+        val createDocument = DocumentCreateData(AUTHOR, TITLE, CONTENT)
 
         val document = documentService.createDocument(createDocument)
 

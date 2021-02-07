@@ -1,6 +1,5 @@
 package com.inkpot.core.application
 
-import com.inkpot.core.application.port.store.DocumentStore
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
@@ -8,13 +7,11 @@ import org.junit.jupiter.api.Test
 
 internal class CoreContextTest {
 
-    lateinit var store: DocumentStore
     lateinit var coreContext: CoreContext
 
     @BeforeEach
     internal fun setUp() {
-        store = mock()
-        coreContext = InternalCoreContext(store)
+        coreContext = InternalCoreContext(mock(), mock())
     }
 
     @Test

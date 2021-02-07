@@ -15,7 +15,7 @@ internal class DocumentRepository(
     fun find(uuid: UUID): DocumentAggregate? =
         documentStore.find(uuid).orElse(null)?.let { toDocument(it) }
 
-    fun findAll(): Set<DocumentAggregate> = toDocuments(documentStore.findAll())
+    fun findAll(): Set<DocumentAggregate> = documentStore.findAll().map { toDocument(it) }.toSet()
 
     fun delete(uuid: UUID) = documentStore.delete(uuid)
 
@@ -29,8 +29,5 @@ internal class DocumentRepository(
 
     private fun toDocument(dto: DocumentDto): DocumentAggregate =
         DocumentAggregate(DocumentId(dto.uuid), dto.author, dto.title, dto.content)
-
-    private fun toDocuments(documentDtoSet: Set<DocumentDto>): Set<DocumentAggregate> =
-        documentDtoSet.map { toDocument(it) }.toSet()
 
 }

@@ -13,6 +13,7 @@ internal class AuthorRepository(private val authorStore: AuthorStore) {
 
     private fun toAuthorDto(aggregate: AuthorAggregate) = AuthorDto(aggregate.id.uuid, aggregate.name)
 
-    private fun toAuthor(authorDto: AuthorDto) = AuthorAggregate(AuthorId(authorDto.uuid), authorDto.name)
+    fun findAll() = authorStore.findAll().map { toAuthor(it) }.toSet()
 
+    private fun toAuthor(authorDto: AuthorDto) = AuthorAggregate(AuthorId(authorDto.uuid), authorDto.name)
 }

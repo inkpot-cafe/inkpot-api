@@ -3,12 +3,10 @@ package com.inkpot.core.application.port.service
 import com.inkpot.core.application.InkpotCore
 import com.inkpot.core.application.port.store.AuthorDto
 import com.inkpot.core.application.port.store.AuthorStore
-import com.inkpot.core.application.port.store.DocumentDto
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -60,5 +58,31 @@ internal class AuthorServiceTest {
         assertTrue(author.isPresent)
         assertEquals(author.get().uuid, uuid)
         assertEquals(author.get().name, NAME)
+    }
+
+    @Test
+    internal fun `find author not found`() {
+        val uuid = UUID.randomUUID()
+        whenever(authorStore.find(uuid)).thenReturn(Optional.empty())
+
+        val author = authorService.findAuthor(uuid)
+
+        verify(authorStore).find(uuid)
+
+        assertFalse(author.isPresent)
+    }
+
+    @Test
+    internal fun `find all authors`() {
+        val uuid = UUID.randomUUID()
+        whenever(authorStore.findAll()).thenReturn(setOf(AuthorDto(uuid, NAME)))
+
+        val authors = authorService.findAllAuthors()
+
+        verify(authorStore).findAll()
+
+        assertEquals(1, authors.size)
+        assertEquals(uuid, authors.elementAt(0).uuid)
+        assertEquals(NAME, authors.elementAt(0).name)
     }
 }

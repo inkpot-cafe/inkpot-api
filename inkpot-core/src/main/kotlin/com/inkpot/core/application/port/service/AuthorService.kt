@@ -8,6 +8,7 @@ import java.util.*
 interface AuthorService {
     fun createAuthor(data: AuthorCreateData): Author
     fun findAuthor(uuid: UUID): Optional<Author>
+    fun findAllAuthors(): Set<Author>
 }
 
 internal class InternalAuthorService(private val authorRepository: AuthorRepository) : AuthorService {
@@ -17,6 +18,7 @@ internal class InternalAuthorService(private val authorRepository: AuthorReposit
     )
 
     override fun findAuthor(uuid: UUID) = Optional.ofNullable(authorRepository.find(uuid)?.let { toAuthor(it) })
+    override fun findAllAuthors() = authorRepository.findAll().map { toAuthor(it) }.toSet()
 
     private fun toAuthor(aggregate: AuthorAggregate) = Author(aggregate.id.uuid, aggregate.name)
 

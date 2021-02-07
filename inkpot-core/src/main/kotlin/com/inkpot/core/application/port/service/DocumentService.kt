@@ -8,7 +8,7 @@ import java.util.*
 
 interface DocumentService {
     fun createDocument(createDocument: CreateDocument): Document
-    fun findDocument(uuid: UUID): Document?
+    fun findDocument(uuid: UUID): Optional<Document>
     fun findAllDocuments(): Set<Document>
     fun deleteDocument(uuid: UUID)
 }
@@ -24,24 +24,12 @@ internal class InternalDocumentService internal constructor(private val document
             createDocument.content
         )
         documentRepository.save(documentAggregate)
-        return Document(
-            documentAggregate.id.uuid,
-            documentAggregate.author,
-            documentAggregate.title,
-            documentAggregate.content
-        )
+        return toDocument(documentAggregate)
     }
 
-    override fun findDocument(uuid: UUID): Document? {
+    override fun findDocument(uuid: UUID): Optional<Document> {
         val documentAggregate = documentRepository.find(uuid)
-        if (documentAggregate != null)
-            return Document(
-                documentAggregate.id.uuid,
-                documentAggregate.author,
-                documentAggregate.title,
-                documentAggregate.content
-            )
-        return null
+        return Optional.ofNullable(documentAggregate?.let { toDocument(it) })
     }
 
     override fun findAllDocuments(): Set<Document> {
@@ -55,15 +43,24 @@ internal class InternalDocumentService internal constructor(private val document
 
 }
 
-data class Document(
-    val uuid: UUID,
-    val author: String,
-    val title: String,
-    val content: String
-)
+private fun toDocument(documentAggregate: DocumentAggregate): Document {
+    return Document(
+        documentAggregate.id.uuid,
+        documentAggregate.author,
+        documentAggregate.title,
+        documentAggregate.content
+    )
+}
 
 data class CreateDocument(
     var author: String,
     var title: String,
     var content: String
+)
+
+data class Document(
+    val uuid: UUID,
+    val author: String,
+    val title: String,
+    val content: String
 )

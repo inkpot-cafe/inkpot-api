@@ -76,12 +76,11 @@ public class TinkerGraphDocumentStore implements DocumentStore {
     }
 
     @Override
-    public DocumentDto find(UUID uuid) {
+    public Optional<DocumentDto> find(UUID uuid) {
         return graph.traversal().V()
                 .as(DOCUMENT).hasId(uuid.toString())
                 .tryNext()
-                .map(toDocumentDto())
-                .orElse(null);
+                .map(toDocumentDto());
     }
 
     @Override

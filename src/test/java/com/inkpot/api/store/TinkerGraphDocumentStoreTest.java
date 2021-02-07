@@ -43,9 +43,10 @@ class TinkerGraphDocumentStoreTest {
 
         tinkerGraphDocumentStore.save(savedDocument);
         restartTinkerGraph();
-        DocumentDto foundDocument = tinkerGraphDocumentStore.find(uuid);
+        Optional<DocumentDto> foundDocument = tinkerGraphDocumentStore.find(uuid);
 
-        assertThat(foundDocument).isEqualTo(savedDocument);
+        assertThat(foundDocument.isPresent()).isTrue();
+        assertThat(foundDocument.get()).isEqualTo(savedDocument);
     }
 
     @Test
@@ -69,9 +70,9 @@ class TinkerGraphDocumentStoreTest {
         restartTinkerGraph();
         tinkerGraphDocumentStore.delete(uuid);
         restartTinkerGraph();
-        DocumentDto foundDocument = tinkerGraphDocumentStore.find(uuid);
+        Optional<DocumentDto> foundDocument = tinkerGraphDocumentStore.find(uuid);
 
-        assertThat(foundDocument).isNull();
+        assertThat(foundDocument.isPresent()).isFalse();
     }
 
     @AfterAll

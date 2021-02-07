@@ -56,7 +56,7 @@ internal class DocumentServiceTest {
     @Test
     internal fun `find an existing document`() {
         val uuid = UUID.randomUUID()
-        whenever(documentStore.find(uuid)).thenReturn(DocumentDto(uuid, AUTHOR, TITLE, CONTENT))
+        whenever(documentStore.find(uuid)).thenReturn(Optional.of(DocumentDto(uuid, AUTHOR, TITLE, CONTENT)))
 
         val document = documentService.findDocument(uuid)
 
@@ -67,16 +67,16 @@ internal class DocumentServiceTest {
         }
 
         assertNotNull(document)
-        assertEquals(uuid, document?.uuid)
-        assertEquals(AUTHOR, document?.author)
-        assertEquals(TITLE, document?.title)
-        assertEquals(CONTENT, document?.content)
+        assertEquals(uuid, document.get().uuid)
+        assertEquals(AUTHOR, document.get().author)
+        assertEquals(TITLE, document.get().title)
+        assertEquals(CONTENT, document.get().content)
     }
 
     @Test
     internal fun `find an non existing document`() {
         val uuid = UUID.randomUUID()
-        whenever(documentStore.find(uuid)).thenReturn(null)
+        whenever(documentStore.find(uuid)).thenReturn(Optional.empty())
 
         val document = documentService.findDocument(uuid)
 
@@ -86,7 +86,7 @@ internal class DocumentServiceTest {
             assertEquals(uuid, firstValue)
         }
 
-        assertNull(document)
+        assertFalse(document.isPresent)
     }
 
     @Test

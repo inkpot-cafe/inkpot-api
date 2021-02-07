@@ -35,7 +35,7 @@ public class DocumentsController {
     @GET
     @Path("/{uuid}")
     public Response findDocument(@PathParam("uuid") UUID uuid) {
-        Optional<Document> document = Optional.ofNullable(context.documentService().findDocument(uuid));
+        Optional<Document> document = context.documentService().findDocument(uuid);
         return document.map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
     }
 

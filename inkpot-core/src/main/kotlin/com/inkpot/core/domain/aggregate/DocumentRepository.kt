@@ -13,7 +13,7 @@ internal class DocumentRepository(
     }
 
     fun find(uuid: UUID): DocumentAggregate? {
-        return toDocument(documentStore.find(uuid))
+        return toDocument(documentStore.find(uuid).orElse(null))
     }
 
     fun findAll(): Set<DocumentAggregate> {

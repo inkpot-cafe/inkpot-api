@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.ws.rs.core.Response;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -79,7 +80,7 @@ class DocumentsControllerTest {
     @Test
     void findDocument() {
         UUID uuid = UUID.randomUUID();
-        when(documentService.findDocument(uuid)).thenReturn(aDocument(uuid));
+        when(documentService.findDocument(uuid)).thenReturn(Optional.of(aDocument(uuid)));
 
         String body = RestAssured
                 .given()
@@ -104,7 +105,7 @@ class DocumentsControllerTest {
     @Test
     void findDocumentNotFound() {
         UUID uuid = UUID.randomUUID();
-        when(documentService.findDocument(uuid)).thenReturn(null);
+        when(documentService.findDocument(uuid)).thenReturn(Optional.empty());
 
         RestAssured
                 .given()
@@ -147,7 +148,7 @@ class DocumentsControllerTest {
     @Test
     void deleteDocument() {
         UUID uuid = UUID.randomUUID();
-        when(documentService.findDocument(uuid)).thenReturn(aDocument(uuid));
+        when(documentService.findDocument(uuid)).thenReturn(Optional.of(aDocument(uuid)));
 
         RestAssured
                 .given()

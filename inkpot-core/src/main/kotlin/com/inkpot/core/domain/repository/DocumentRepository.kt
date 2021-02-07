@@ -1,7 +1,9 @@
-package com.inkpot.core.domain.aggregate
+package com.inkpot.core.domain.repository
 
 import com.inkpot.core.application.port.store.DocumentDto
 import com.inkpot.core.application.port.store.DocumentStore
+import com.inkpot.core.domain.aggregate.DocumentAggregate
+import com.inkpot.core.domain.aggregate.DocumentId
 import java.util.*
 
 internal class DocumentRepository(

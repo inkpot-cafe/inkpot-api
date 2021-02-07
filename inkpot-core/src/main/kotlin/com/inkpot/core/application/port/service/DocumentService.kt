@@ -2,7 +2,7 @@ package com.inkpot.core.application.port.service
 
 import com.inkpot.core.domain.aggregate.DocumentAggregate
 import com.inkpot.core.domain.aggregate.DocumentId
-import com.inkpot.core.domain.aggregate.DocumentRepository
+import com.inkpot.core.domain.repository.DocumentRepository
 import java.util.*
 
 

@@ -3,7 +3,7 @@ package com.inkpot.core.application
 import com.inkpot.core.application.port.service.DocumentService
 import com.inkpot.core.application.port.service.InternalDocumentService
 import com.inkpot.core.application.port.store.DocumentStore
-import com.inkpot.core.domain.aggregate.DocumentRepository
+import com.inkpot.core.domain.repository.DocumentRepository
 
 interface CoreContext {
     fun documentService(): DocumentService

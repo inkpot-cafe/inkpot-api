@@ -1,6 +1,6 @@
-package com.inkpot.api.controller.request;
+package com.inkpot.api.controller.document;
 
-public class CreateDocumentRequest {
+public class DocumentCreateRequest {
 
     private String author;
     private String title;

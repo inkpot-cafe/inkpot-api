@@ -1,4 +1,4 @@
-package com.inkpot.api.controller;
+package com.inkpot.api.controller.document;
 
 import com.inkpot.core.application.CoreContext;
 import com.inkpot.core.application.port.service.Document;
@@ -8,7 +8,6 @@ import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.junit.mockito.InjectSpy;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import org.eclipse.microprofile.config.ConfigProvider;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.*;
 @QuarkusTest
 class DocumentsControllerTest {
 
-    public static final String DOCUMENTS_ENDPOINT = ConfigProvider.getConfig().getValue("quarkus.resteasy.path", String.class) + "documents";
+    public static final String DOCUMENTS_ENDPOINT = "/documents";
     public static final String AUTHOR_VALUE = "author";
     public static final String TITLE_VALUE = "title";
     public static final String CONTENT_VALUE = "content";

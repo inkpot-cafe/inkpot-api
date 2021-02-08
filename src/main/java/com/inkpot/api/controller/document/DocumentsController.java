@@ -1,6 +1,5 @@
-package com.inkpot.api.controller;
+package com.inkpot.api.controller.document;
 
-import com.inkpot.api.controller.request.CreateDocumentRequest;
 import com.inkpot.core.application.CoreContext;
 import com.inkpot.core.application.port.service.DocumentCreateData;
 import com.inkpot.core.application.port.service.Document;
@@ -13,7 +12,7 @@ import javax.ws.rs.core.Response;
 import java.util.Optional;
 import java.util.UUID;
 
-@Path("documents")
+@Path("/documents")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
@@ -27,8 +26,8 @@ public class DocumentsController {
     }
 
     @POST
-    public Response createDocument(CreateDocumentRequest request) {
-        Document document = context.documentService().createDocument(toCreateDocument(request));
+    public Response createDocument(DocumentCreateRequest request) {
+        Document document = context.documentService().createDocument(toDocumentCreateData(request));
         return Response.ok(document).build();
     }
 
@@ -51,7 +50,7 @@ public class DocumentsController {
         return Response.ok().build();
     }
 
-    private DocumentCreateData toCreateDocument(CreateDocumentRequest request) {
+    private DocumentCreateData toDocumentCreateData(DocumentCreateRequest request) {
         return new DocumentCreateData(
                 request.getAuthor(),
                 request.getTitle(),

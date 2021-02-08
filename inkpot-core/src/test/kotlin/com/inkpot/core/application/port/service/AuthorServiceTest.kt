@@ -90,7 +90,7 @@ internal class AuthorServiceTest {
     internal fun `delete author`() {
         val uuid = UUID.randomUUID()
 
-        authorService.delete(uuid)
+        authorService.deleteAuthor(uuid)
 
         verify(authorStore).delete(uuid)
     }

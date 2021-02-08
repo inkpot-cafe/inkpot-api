@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -48,7 +49,7 @@ public class TinkerGraphDocumentStore implements DocumentStore {
         return graph.traversal().V()
                 .as(DOCUMENT).hasId(uuid.toString())
                 .tryNext()
-                .map(this::toDocumentDto);
+                .map(toDocumentDto());
     }
 
     @Override
@@ -56,7 +57,7 @@ public class TinkerGraphDocumentStore implements DocumentStore {
         return graph.traversal().V()
                 .as(DOCUMENT)
                 .toStream()
-                .map(this::toDocumentDto)
+                .map(toDocumentDto())
                 .collect(Collectors.toSet());
     }
 
@@ -68,12 +69,13 @@ public class TinkerGraphDocumentStore implements DocumentStore {
         LOGGER.info("Deleted Document with id: {}", uuid);
     }
 
-    private DocumentDto toDocumentDto(Vertex v) {
-        return new DocumentDto(
+    private Function<Vertex, DocumentDto> toDocumentDto() {
+        return v -> new DocumentDto(
                 UUID.fromString(v.id().toString()),
                 v.property(AUTHOR).value().toString(),
                 v.property(TITLE).value().toString(),
                 v.property(CONTENT).value().toString());
     }
+
 }
 

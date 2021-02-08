@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -44,7 +45,7 @@ public class TinkerGraphAuthorStore implements AuthorStore {
         return graph.traversal().V()
                 .as(AUTHOR).hasId(uuid.toString())
                 .tryNext()
-                .map(this::toAuthorDto);
+                .map(toAuthorDto());
     }
 
     @Override
@@ -52,7 +53,7 @@ public class TinkerGraphAuthorStore implements AuthorStore {
         return graph.traversal().V()
                 .as(AUTHOR)
                 .toStream()
-                .map(this::toAuthorDto)
+                .map(toAuthorDto())
                 .collect(Collectors.toSet());
     }
 
@@ -65,8 +66,8 @@ public class TinkerGraphAuthorStore implements AuthorStore {
 
     }
 
-    private AuthorDto toAuthorDto(Vertex v) {
-        return new AuthorDto(UUID.fromString(v.id().toString()), v.property(NAME).value().toString());
+    private Function<Vertex, AuthorDto> toAuthorDto() {
+        return v -> new AuthorDto(UUID.fromString(v.id().toString()), v.property(NAME).value().toString());
     }
 
 }

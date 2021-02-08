@@ -43,7 +43,8 @@ public class TinkerGraphAuthorStore implements AuthorStore {
     @Override
     public Optional<AuthorDto> find(UUID uuid) {
         return graph.traversal().V()
-                .as(AUTHOR).hasId(uuid.toString())
+                .hasLabel(AUTHOR)
+                .hasId(uuid.toString())
                 .tryNext()
                 .map(toAuthorDto());
     }
@@ -51,7 +52,7 @@ public class TinkerGraphAuthorStore implements AuthorStore {
     @Override
     public Set<AuthorDto> findAll() {
         return graph.traversal().V()
-                .as(AUTHOR)
+                .hasLabel(AUTHOR)
                 .toStream()
                 .map(toAuthorDto())
                 .collect(Collectors.toSet());
@@ -60,7 +61,8 @@ public class TinkerGraphAuthorStore implements AuthorStore {
     @Override
     public void delete(UUID uuid) {
         graph.traversal().V()
-                .as(AUTHOR).hasId(uuid.toString())
+                .hasLabel(AUTHOR)
+                .hasId(uuid.toString())
                 .drop().iterate();
         LOGGER.info("Deleted Author with id: {}", uuid);
 

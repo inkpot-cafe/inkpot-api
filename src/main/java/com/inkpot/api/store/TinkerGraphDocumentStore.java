@@ -47,7 +47,8 @@ public class TinkerGraphDocumentStore implements DocumentStore {
     @Override
     public Optional<DocumentDto> find(UUID uuid) {
         return graph.traversal().V()
-                .as(DOCUMENT).hasId(uuid.toString())
+                .hasLabel(DOCUMENT)
+                .hasId(uuid.toString())
                 .tryNext()
                 .map(toDocumentDto());
     }
@@ -55,7 +56,7 @@ public class TinkerGraphDocumentStore implements DocumentStore {
     @Override
     public Set<DocumentDto> findAll() {
         return graph.traversal().V()
-                .as(DOCUMENT)
+                .hasLabel(DOCUMENT)
                 .toStream()
                 .map(toDocumentDto())
                 .collect(Collectors.toSet());
@@ -64,7 +65,8 @@ public class TinkerGraphDocumentStore implements DocumentStore {
     @Override
     public void delete(UUID uuid) {
         graph.traversal().V()
-                .as(DOCUMENT).hasId(uuid.toString())
+                .hasLabel(DOCUMENT)
+                .hasId(uuid.toString())
                 .drop().iterate();
         LOGGER.info("Deleted Document with id: {}", uuid);
     }

@@ -1,6 +1,6 @@
 package com.inkpot.api.store;
 
-import com.inkpot.core.application.port.store.DocumentDto;
+import com.inkpot.core.application.port.store.AuthorDto;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,13 +15,11 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TinkerGraphDocumentStoreTest {
+class TinkerGraphAuthorStoreTest {
 
     public static final String GRAPH_LOCATION = "graph.kryo";
-    public static final String AUTHOR = "author";
-    public static final String TITLE = "title";
-    public static final String CONTENT = "content";
-    private TinkerGraphDocumentStore tinkerGraphDocumentStore;
+    public static final String NAME = "name";
+    private TinkerGraphAuthorStore tinkerGraphAuthorStore;
     private TinkerGraphProvider tinkerGraphProvider;
 
     @BeforeEach
@@ -29,46 +27,46 @@ class TinkerGraphDocumentStoreTest {
         cleanTinkerGraphData();
         tinkerGraphProvider = new TinkerGraphProvider(Optional.of(GRAPH_LOCATION));
         Graph graph = tinkerGraphProvider.instantiateGraph();
-        tinkerGraphDocumentStore = new TinkerGraphDocumentStore(graph);
+        tinkerGraphAuthorStore = new TinkerGraphAuthorStore(graph);
     }
 
     @Test
     void testSaveAndFindDocument() {
         UUID uuid = UUID.randomUUID();
-        DocumentDto savedDocument = new DocumentDto(uuid, AUTHOR, TITLE, CONTENT);
+        AuthorDto savedAuthor = new AuthorDto(uuid, NAME);
 
-        tinkerGraphDocumentStore.save(savedDocument);
+        tinkerGraphAuthorStore.save(savedAuthor);
         restartTinkerGraph();
-        Optional<DocumentDto> foundDocument = tinkerGraphDocumentStore.find(uuid);
+        Optional<AuthorDto> foundAuthor = tinkerGraphAuthorStore.find(uuid);
 
-        assertThat(foundDocument.isPresent()).isTrue();
-        assertThat(foundDocument.get()).isEqualTo(savedDocument);
+        assertThat(foundAuthor.isPresent()).isTrue();
+        assertThat(foundAuthor.get()).isEqualTo(savedAuthor);
     }
 
     @Test
     void testSaveAndFindAllDocuments() {
         UUID uuid = UUID.randomUUID();
-        DocumentDto savedDocument = new DocumentDto(uuid, AUTHOR, TITLE, CONTENT);
+        AuthorDto savedAuthor = new AuthorDto(uuid, NAME);
 
-        tinkerGraphDocumentStore.save(savedDocument);
+        tinkerGraphAuthorStore.save(savedAuthor);
         restartTinkerGraph();
-        Set<DocumentDto> foundDocuments = tinkerGraphDocumentStore.findAll();
+        Set<AuthorDto> foundAuthors = tinkerGraphAuthorStore.findAll();
 
-        assertThat(foundDocuments).containsOnly(savedDocument);
+        assertThat(foundAuthors).containsOnly(savedAuthor);
     }
 
     @Test
     void testSaveAndDeleteAndFindDocument() {
         UUID uuid = UUID.randomUUID();
-        DocumentDto savedDocument = new DocumentDto(uuid, AUTHOR, TITLE, CONTENT);
+        AuthorDto savedAuthor = new AuthorDto(uuid, NAME);
 
-        tinkerGraphDocumentStore.save(savedDocument);
+        tinkerGraphAuthorStore.save(savedAuthor);
         restartTinkerGraph();
-        tinkerGraphDocumentStore.delete(uuid);
+        tinkerGraphAuthorStore.delete(uuid);
         restartTinkerGraph();
-        Optional<DocumentDto> foundDocument = tinkerGraphDocumentStore.find(uuid);
+        Optional<AuthorDto> foundAuthor = tinkerGraphAuthorStore.find(uuid);
 
-        assertThat(foundDocument.isPresent()).isFalse();
+        assertThat(foundAuthor.isPresent()).isFalse();
     }
 
     @AfterAll

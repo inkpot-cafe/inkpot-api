@@ -29,7 +29,7 @@ internal class InternalDocumentService(private val documentRepository: DocumentR
 
     override fun findDocument(uuid: UUID) = Optional.ofNullable(documentRepository.find(uuid)?.let { toDocument(it) })
 
-    override fun findAllDocuments() = documentRepository.findAll().map { toDocument(it) }.toSet()
+    override fun findAllDocuments() = documentRepository.findAll().asSequence().map { toDocument(it) }.toSet()
 
     override fun deleteDocument(uuid: UUID) = documentRepository.delete(uuid)
 

@@ -20,7 +20,7 @@ internal class InternalAuthorService(private val authorRepository: AuthorReposit
 
     override fun findAuthor(uuid: UUID) = Optional.ofNullable(authorRepository.find(uuid)?.let { toAuthor(it) })
 
-    override fun findAllAuthors() = authorRepository.findAll().asSequence().map { toAuthor(it) }.toSet()
+    override fun findAllAuthors() = authorRepository.findAll().map { toAuthor(it) }.toSet()
 
     override fun deleteAuthor(uuid: UUID) = authorRepository.delete(uuid)
 

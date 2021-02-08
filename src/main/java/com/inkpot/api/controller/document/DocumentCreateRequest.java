@@ -1,18 +1,10 @@
-package com.inkpot.api.controller;
+package com.inkpot.api.controller.document;
 
-public class CreateDocument {
+public class DocumentCreateRequest {
 
-    private String title;
     private String author;
+    private String title;
     private String content;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public String getAuthor() {
         return author;
@@ -20,6 +12,14 @@ public class CreateDocument {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {

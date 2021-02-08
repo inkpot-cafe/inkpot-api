@@ -1,8 +1,9 @@
 package com.inkpot.api;
 
-import com.inkpot.core.CoreContext;
-import com.inkpot.core.InkpotCore;
-import com.inkpot.core.store.DocumentStore;
+import com.inkpot.core.application.CoreContext;
+import com.inkpot.core.application.InkpotCore;
+import com.inkpot.core.application.port.store.AuthorStore;
+import com.inkpot.core.application.port.store.DocumentStore;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
@@ -13,8 +14,9 @@ public class InkpotCoreConfig {
 
     @Inject
     @Produces
-    public CoreContext coreContext(DocumentStore store) {
-        return InkpotCore.createContext(store);
+    @ApplicationScoped
+    public CoreContext coreContext(AuthorStore authorStore, DocumentStore documentStore) {
+        return InkpotCore.createContext(authorStore, documentStore);
     }
 
 }

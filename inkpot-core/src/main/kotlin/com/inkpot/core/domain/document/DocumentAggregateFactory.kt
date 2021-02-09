@@ -5,7 +5,7 @@ import java.util.*
 
 internal class DocumentAggregateFactory(private val authorRepository: AuthorRepository) {
 
-    fun newAggregate(): DocumentAggregateBuilder = DocumentAggregateBuilder(authorRepository)
+    fun newAggregate() = DocumentAggregateBuilder(authorRepository)
 
     internal class DocumentAggregateBuilder(private val authorRepository: AuthorRepository) :
         DocumentAggregate.Builder {

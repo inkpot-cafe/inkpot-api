@@ -11,9 +11,9 @@ internal class DocumentRepository(
     fun save(document: DocumentAggregate) = documentStore.save(toDocumentDto(document))
 
     fun find(uuid: UUID): DocumentAggregate? =
-        documentStore.find(uuid).orElse(null)?.let { toDocument(it) }
+        documentStore.find(uuid).orElse(null)?.let { toDocumentAggregate(it) }
 
-    fun findAll(): Set<DocumentAggregate> = documentStore.findAll().map { toDocument(it) }.toSet()
+    fun findAll(): Set<DocumentAggregate> = documentStore.findAll().map { toDocumentAggregate(it) }.toSet()
 
     fun delete(uuid: UUID) = documentStore.delete(uuid)
 
@@ -25,7 +25,7 @@ internal class DocumentRepository(
             document.content
         )
 
-    private fun toDocument(dto: DocumentDto) =
+    private fun toDocumentAggregate(dto: DocumentDto) =
         AggregateBuilder()
             .id(dto.id)
             .authorId(dto.authorId)
@@ -53,9 +53,7 @@ internal class DocumentRepository(
         fun title(title: String) = apply { this.title = title }
         fun content(content: String) = apply { this.content = content }
 
-        fun build(): DocumentAggregate {
-            return DocumentAggregate(this)
-        }
+        fun build() = DocumentAggregate(this)
     }
 
 }

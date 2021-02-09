@@ -16,8 +16,7 @@ interface DocumentService {
 internal class InternalDocumentService(
     private val documentAggregateFactory: DocumentAggregateFactory,
     private val documentRepository: DocumentRepository
-) :
-    DocumentService {
+) : DocumentService {
 
     override fun createDocument(data: DocumentCreateData) = toDocument(
         documentAggregateFactory.newAggregate()

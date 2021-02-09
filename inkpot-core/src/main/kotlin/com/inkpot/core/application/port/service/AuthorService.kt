@@ -1,7 +1,7 @@
 package com.inkpot.core.application.port.service
 
-import com.inkpot.core.application.InternalCoreContext
 import com.inkpot.core.domain.author.AuthorAggregate
+import com.inkpot.core.domain.author.AuthorAggregateFactory
 import com.inkpot.core.domain.author.AuthorRepository
 import java.util.*
 
@@ -12,10 +12,13 @@ interface AuthorService {
     fun deleteAuthor(id: UUID)
 }
 
-internal class InternalAuthorService(private val authorRepository: AuthorRepository) : AuthorService {
+internal class InternalAuthorService(
+    private val authorAggregateFactory: AuthorAggregateFactory,
+    private val authorRepository: AuthorRepository
+) : AuthorService {
 
     override fun createAuthor(data: AuthorCreateData) = toAuthor(
-        AuthorAggregate(UUID.randomUUID(), data.name).also { authorRepository.save(it) }
+        authorAggregateFactory.newAggregate().name(data.name).build().also { authorRepository.save(it) }
     )
 
     override fun findAuthor(id: UUID) = Optional.ofNullable(authorRepository.find(id)?.let { toAuthor(it) })

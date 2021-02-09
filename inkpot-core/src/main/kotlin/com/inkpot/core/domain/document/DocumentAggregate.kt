@@ -1,8 +1,10 @@
 package com.inkpot.core.domain.document
 
+import com.inkpot.core.domain.DomainClass
+import com.inkpot.core.domain.DomainContext
 import java.util.*
 
-internal class DocumentAggregate(builder: Builder) {
+internal class DocumentAggregate(domainContext: DomainContext, builder: Builder) : DomainClass(domainContext) {
     val id: UUID = builder.id()
     var authorId: UUID = builder.authorId()
         private set
@@ -17,6 +19,5 @@ internal class DocumentAggregate(builder: Builder) {
         fun title(): String
         fun content(): String
     }
-
 }
 

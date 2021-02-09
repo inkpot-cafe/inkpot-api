@@ -1,24 +1,28 @@
 package com.inkpot.core.domain.author
 
+import com.inkpot.core.domain.DomainClass
+import com.inkpot.core.domain.DomainContext
 import java.util.*
 
-internal class AuthorAggregateFactory() {
+internal class AuthorAggregateFactory(domainContext: DomainContext) : DomainClass(domainContext) {
 
-    fun newAggregate() = AuthorAggregateBuilder()
+    fun newAggregate() = AuthorAggregateBuilder(domainContext)
 
-    internal class AuthorAggregateBuilder() : AuthorAggregate.Builder {
+    internal class AuthorAggregateBuilder(domainContext: DomainContext) :
+        AuthorAggregate.Builder, DomainClass(domainContext) {
 
-        private var id: UUID? = null
+        private val id: UUID = UUID.randomUUID()
         private var name: String = ""
+        private val documentIds: Set<UUID> = emptySet()
 
-        override fun id() = id!!
+        override fun id() = id
         override fun name() = name
+        override fun documentIds() = documentIds
 
         fun name(name: String) = apply { this.name = name }
 
         fun build(): AuthorAggregate {
-            id = UUID.randomUUID()
-            return AuthorAggregate(this)
+            return AuthorAggregate(domainContext, this)
         }
     }
 

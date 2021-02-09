@@ -19,6 +19,7 @@ internal class DocumentServiceTest {
     companion object {
         private const val TITLE = "title"
         private const val CONTENT = "content"
+        private val DOCUMENT_IDS = emptySet<UUID>()
     }
 
     private lateinit var authorStore: AuthorStore
@@ -130,5 +131,5 @@ internal class DocumentServiceTest {
 
     private fun aDocumentDto(uuid: UUID, authorId: UUID) = DocumentDto(uuid, authorId, TITLE, CONTENT)
 
-    private fun aAuthorDto(authorId: UUID) = AuthorDto(authorId, "name")
+    private fun aAuthorDto(authorId: UUID) = AuthorDto(authorId, "name", DOCUMENT_IDS)
 }

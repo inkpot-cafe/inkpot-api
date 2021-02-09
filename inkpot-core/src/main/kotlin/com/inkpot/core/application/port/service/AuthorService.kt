@@ -27,10 +27,9 @@ internal class InternalAuthorService(
 
     override fun deleteAuthor(id: UUID) = authorRepository.delete(id)
 
-    private fun toAuthor(aggregate: AuthorAggregate) = Author(aggregate.id, aggregate.name)
-
+    private fun toAuthor(aggregate: AuthorAggregate) = Author(aggregate.id, aggregate.name, aggregate.documentIds)
 }
 
-data class Author(val id: UUID, val name: String)
+data class Author(val id: UUID, val name: String, val documentIds: Set<UUID>)
 
 data class AuthorCreateData(val name: String)

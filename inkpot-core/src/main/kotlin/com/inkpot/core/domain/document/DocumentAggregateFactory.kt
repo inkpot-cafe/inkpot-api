@@ -1,21 +1,25 @@
 package com.inkpot.core.domain.document
 
+import com.inkpot.core.domain.DomainClass
+import com.inkpot.core.domain.DomainContext
 import com.inkpot.core.domain.author.AuthorRepository
 import java.util.*
 
-internal class DocumentAggregateFactory(private val authorRepository: AuthorRepository) {
+internal class DocumentAggregateFactory(domainContext: DomainContext) :
+    DomainClass(domainContext) {
 
-    fun newAggregate() = DocumentAggregateBuilder(authorRepository)
+    fun newAggregate() = DocumentAggregateBuilder(domainContext)
 
-    internal class DocumentAggregateBuilder(private val authorRepository: AuthorRepository) :
-        DocumentAggregate.Builder {
+    internal class DocumentAggregateBuilder(
+        domainContext: DomainContext
+    ) : DocumentAggregate.Builder, DomainClass(domainContext) {
 
-        private var id: UUID? = null
+        private val id: UUID = UUID.randomUUID()
         private var authorId: UUID? = null
         private var title: String = ""
         private var content: String = ""
 
-        override fun id() = id!!
+        override fun id() = id
         override fun authorId() = authorId!!
         override fun title() = title
         override fun content() = content
@@ -26,9 +30,11 @@ internal class DocumentAggregateFactory(private val authorRepository: AuthorRepo
 
         fun build(): DocumentAggregate {
             checkNotNull(authorId) { "authorId must be not null" }
-            checkNotNull(authorId?.let { authorRepository.find(it) }) { "No Author found with authorId: $authorId" }
-            id = UUID.randomUUID()
-            return DocumentAggregate(this)
+            checkNotNull(
+                authorId?.let { domainContext.authorRepository().find(it) }
+            ) { "No Author found with authorId: $authorId" }
+
+            return DocumentAggregate(domainContext, this)
         }
     }
 

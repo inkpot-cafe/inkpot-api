@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.ws.rs.core.Response;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -155,7 +156,7 @@ class AuthorControllerTest {
     }
 
     private Author anAuthor(UUID uuid) {
-        return new Author(uuid, NAME_VALUE);
+        return new Author(uuid, NAME_VALUE, Collections.emptySet());
     }
 
 }

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -19,6 +20,7 @@ class TinkerGraphAuthorStoreTest {
 
     public static final String GRAPH_LOCATION = "graph.kryo";
     public static final String NAME = "name";
+    public static final Set<UUID> DOCUMENT_IDS = Collections.emptySet();
     private TinkerGraphAuthorStore tinkerGraphAuthorStore;
     private TinkerGraphProvider tinkerGraphProvider;
 
@@ -33,7 +35,7 @@ class TinkerGraphAuthorStoreTest {
     @Test
     void testSaveAndFindDocument() {
         UUID uuid = UUID.randomUUID();
-        AuthorDto savedAuthor = new AuthorDto(uuid, NAME);
+        AuthorDto savedAuthor = anAuthorDto(uuid);
 
         tinkerGraphAuthorStore.save(savedAuthor);
         restartTinkerGraph();
@@ -46,7 +48,7 @@ class TinkerGraphAuthorStoreTest {
     @Test
     void testSaveAndFindAllDocuments() {
         UUID uuid = UUID.randomUUID();
-        AuthorDto savedAuthor = new AuthorDto(uuid, NAME);
+        AuthorDto savedAuthor = anAuthorDto(uuid);
 
         tinkerGraphAuthorStore.save(savedAuthor);
         restartTinkerGraph();
@@ -58,7 +60,7 @@ class TinkerGraphAuthorStoreTest {
     @Test
     void testSaveAndDeleteAndFindDocument() {
         UUID uuid = UUID.randomUUID();
-        AuthorDto savedAuthor = new AuthorDto(uuid, NAME);
+        AuthorDto savedAuthor = anAuthorDto(uuid);
 
         tinkerGraphAuthorStore.save(savedAuthor);
         restartTinkerGraph();
@@ -72,6 +74,10 @@ class TinkerGraphAuthorStoreTest {
     @AfterAll
     static void afterAll() throws IOException {
         cleanTinkerGraphData();
+    }
+
+    private AuthorDto anAuthorDto(UUID uuid) {
+        return new AuthorDto(uuid, NAME, DOCUMENT_IDS);
     }
 
     private static void cleanTinkerGraphData() throws IOException {

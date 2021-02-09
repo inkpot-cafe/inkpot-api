@@ -2,6 +2,7 @@ package com.inkpot.api.store;
 
 import com.inkpot.core.application.port.store.DocumentDto;
 import com.inkpot.core.application.port.store.DocumentStore;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -13,7 +14,6 @@ import javax.inject.Inject;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -25,6 +25,7 @@ public class TinkerGraphDocumentStore implements DocumentStore {
     public static final String AUTHOR = "author";
     public static final String CONTENT = "content";
     public static final String DOCUMENT = "document";
+    public static final String WRITES = "writes";
 
     private final Graph graph;
 
@@ -36,21 +37,26 @@ public class TinkerGraphDocumentStore implements DocumentStore {
     @Override
     public void save(DocumentDto document) {
         graph.traversal().addV(DOCUMENT)
+                .as(DOCUMENT)
                 .property(T.id, document.getId().toString())
                 .property(TITLE, document.getTitle())
-                .property(AUTHOR, document.getAuthorId())
                 .property(CONTENT, document.getContent())
+                .V()
+                .hasLabel(AUTHOR)
+                .hasId(document.getAuthorId().toString())
+                .as(AUTHOR)
+                .addE(WRITES).from(AUTHOR).to(DOCUMENT)
                 .iterate();
         LOGGER.info("Saved Document with id: {}", document.getId());
     }
 
     @Override
-    public Optional<DocumentDto> find(UUID uuid) {
+    public Optional<DocumentDto> find(UUID id) {
         return graph.traversal().V()
                 .hasLabel(DOCUMENT)
-                .hasId(uuid.toString())
+                .hasId(id.toString())
                 .tryNext()
-                .map(toDocumentDto());
+                .map(this::toDocumentDto);
     }
 
     @Override
@@ -58,23 +64,24 @@ public class TinkerGraphDocumentStore implements DocumentStore {
         return graph.traversal().V()
                 .hasLabel(DOCUMENT)
                 .toStream()
-                .map(toDocumentDto())
+                .map(this::toDocumentDto)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public void delete(UUID uuid) {
+    public void delete(UUID id) {
         graph.traversal().V()
                 .hasLabel(DOCUMENT)
-                .hasId(uuid.toString())
+                .hasId(id.toString())
                 .drop().iterate();
-        LOGGER.info("Deleted Document with id: {}", uuid);
+        LOGGER.info("Deleted Document with id: {}", id);
     }
 
-    private Function<Vertex, DocumentDto> toDocumentDto() {
-        return v -> new DocumentDto(
+    private DocumentDto toDocumentDto(Vertex v) {
+        UUID authorId = UUID.fromString(v.edges(Direction.IN, WRITES).next().outVertex().id().toString());
+        return new DocumentDto(
                 UUID.fromString(v.id().toString()),
-                UUID.fromString(v.property(AUTHOR).value().toString()),
+                authorId,
                 v.property(TITLE).value().toString(),
                 v.property(CONTENT).value().toString());
     }

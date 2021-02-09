@@ -1,6 +1,7 @@
 package com.inkpot.core.application.port.service
 
 import com.inkpot.core.domain.document.DocumentAggregate
+import com.inkpot.core.domain.document.DocumentAggregateFactory
 import com.inkpot.core.domain.document.DocumentRepository
 import java.util.*
 
@@ -13,13 +14,13 @@ interface DocumentService {
 }
 
 internal class InternalDocumentService(
-    private val documentFactory: DocumentAggregate.Factory,
+    private val documentAggregateFactory: DocumentAggregateFactory,
     private val documentRepository: DocumentRepository
 ) :
     DocumentService {
 
     override fun createDocument(data: DocumentCreateData) = toDocument(
-        documentFactory.newAggregate()
+        documentAggregateFactory.newAggregate()
             .authorId(data.authorId)
             .title(data.title)
             .content(data.content)

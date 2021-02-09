@@ -2,7 +2,6 @@ package com.inkpot.core.domain.document
 
 import com.inkpot.core.application.port.store.DocumentDto
 import com.inkpot.core.application.port.store.DocumentStore
-import com.inkpot.core.domain.author.AuthorRepository
 import java.util.*
 
 internal class DocumentRepository(
@@ -27,14 +26,14 @@ internal class DocumentRepository(
         )
 
     private fun toDocument(dto: DocumentDto) =
-        Builder()
+        AggregateBuilder()
             .id(dto.id)
             .authorId(dto.authorId)
             .title(dto.title)
             .content(dto.content)
             .build()
 
-    internal class Builder {
+    private class AggregateBuilder : DocumentAggregate.Builder {
         var id: UUID? = null
             private set
         var authorId: UUID? = null
@@ -44,14 +43,17 @@ internal class DocumentRepository(
         var content: String = ""
             private set
 
+        override fun id() = id!!
+        override fun authorId() = authorId!!
+        override fun title() = title
+        override fun content() = content
+
         fun id(id: UUID) = apply { this.id = id }
         fun authorId(authorId: UUID) = apply { this.authorId = authorId }
         fun title(title: String) = apply { this.title = title }
         fun content(content: String) = apply { this.content = content }
 
         fun build(): DocumentAggregate {
-            checkNotNull(id)
-            checkNotNull(authorId)
             return DocumentAggregate(this)
         }
     }

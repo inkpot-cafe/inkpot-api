@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.ws.rs.core.Response;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -31,7 +32,7 @@ class AuthorControllerTest {
     public static final String AUTHOR_ENDPOINT = "/authors";
     public static final String NAME_VALUE = "name";
     public static final String NAME_FIELD = "name";
-    public static final String UUID_FIELD = "uuid";
+    public static final String UUID_FIELD = "id";
 
 
     @Mock
@@ -81,9 +82,9 @@ class AuthorControllerTest {
 
         String body = RestAssured
                 .given()
-                .pathParam("uuid", uuid)
+                .pathParam("id", uuid)
                 .when()
-                .get(AUTHOR_ENDPOINT + "/{uuid}")
+                .get(AUTHOR_ENDPOINT + "/{id}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .extract().body().asString();
@@ -104,9 +105,9 @@ class AuthorControllerTest {
 
         RestAssured
                 .given()
-                .pathParam("uuid", uuid)
+                .pathParam("id", uuid)
                 .when()
-                .get(AUTHOR_ENDPOINT + "/{uuid}")
+                .get(AUTHOR_ENDPOINT + "/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
 
@@ -143,9 +144,9 @@ class AuthorControllerTest {
 
         RestAssured
                 .given()
-                .pathParam("uuid", uuid)
+                .pathParam("id", uuid)
                 .when()
-                .delete(AUTHOR_ENDPOINT + "/{uuid}")
+                .delete(AUTHOR_ENDPOINT + "/{id}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode());
 
@@ -155,7 +156,7 @@ class AuthorControllerTest {
     }
 
     private Author anAuthor(UUID uuid) {
-        return new Author(uuid, NAME_VALUE);
+        return new Author(uuid, NAME_VALUE, Collections.emptySet());
     }
 
 }

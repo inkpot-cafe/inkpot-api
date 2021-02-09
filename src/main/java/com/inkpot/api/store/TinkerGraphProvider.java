@@ -22,7 +22,7 @@ public class TinkerGraphProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(TinkerGraphProvider.class);
 
     private final Optional<String> graphLocation;
-    private TinkerGraph graph;
+    private Graph graph;
 
     @Inject
     public TinkerGraphProvider(@ConfigProperty(name = "tinkergraph.graphLocation") Optional<String> graphLocation) {

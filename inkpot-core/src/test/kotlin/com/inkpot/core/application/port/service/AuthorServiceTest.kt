@@ -16,6 +16,7 @@ internal class AuthorServiceTest {
 
     companion object {
         private const val NAME = "name"
+        private val DOCUMENT_IDS = emptySet<UUID>()
     }
 
     private lateinit var authorStore: AuthorStore
@@ -37,27 +38,29 @@ internal class AuthorServiceTest {
         argumentCaptor<AuthorDto>().apply {
             verify(authorStore).save(capture())
 
-            uuid = firstValue.uuid
+            uuid = firstValue.id
             assertNotNull(uuid)
             assertEquals(NAME, firstValue.name)
         }
         assertNotNull(author)
-        assertEquals(author.name, NAME)
-        assertEquals(author.uuid, uuid)
+        assertEquals(uuid, author.id)
+        assertEquals(NAME, author.name)
+        assertEquals(DOCUMENT_IDS, author.documentIds)
     }
 
     @Test
     internal fun `find author`() {
         val uuid = UUID.randomUUID()
-        whenever(authorStore.find(uuid)).thenReturn(Optional.of(AuthorDto(uuid, NAME)))
+        whenever(authorStore.find(uuid)).thenReturn(Optional.of(anAuthorDto(uuid)))
 
         val author = authorService.findAuthor(uuid)
 
         verify(authorStore).find(uuid)
 
         assertTrue(author.isPresent)
-        assertEquals(author.get().uuid, uuid)
-        assertEquals(author.get().name, NAME)
+        assertEquals(uuid, author.get().id)
+        assertEquals(NAME, author.get().name)
+        assertEquals(DOCUMENT_IDS, author.get().documentIds)
     }
 
     @Test
@@ -75,16 +78,19 @@ internal class AuthorServiceTest {
     @Test
     internal fun `find all authors`() {
         val uuid = UUID.randomUUID()
-        whenever(authorStore.findAll()).thenReturn(setOf(AuthorDto(uuid, NAME)))
+        whenever(authorStore.findAll()).thenReturn(setOf(anAuthorDto(uuid)))
 
         val authors = authorService.findAllAuthors()
 
         verify(authorStore).findAll()
 
         assertEquals(1, authors.size)
-        assertEquals(uuid, authors.elementAt(0).uuid)
+        assertEquals(uuid, authors.elementAt(0).id)
         assertEquals(NAME, authors.elementAt(0).name)
+        assertEquals(DOCUMENT_IDS, authors.elementAt(0).documentIds)
     }
+
+    private fun anAuthorDto(uuid: UUID) = AuthorDto(uuid, NAME, DOCUMENT_IDS)
 
     @Test
     internal fun `delete author`() {

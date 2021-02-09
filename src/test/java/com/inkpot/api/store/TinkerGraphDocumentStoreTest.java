@@ -2,6 +2,7 @@ package com.inkpot.api.store;
 
 import com.inkpot.core.application.port.store.DocumentDto;
 import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TinkerGraphDocumentStoreTest {
 
     public static final String GRAPH_LOCATION = "graph.kryo";
-    public static final String AUTHOR = "author";
+    public static final UUID AUTHOR_ID = UUID.randomUUID();
     public static final String TITLE = "title";
     public static final String CONTENT = "content";
     private TinkerGraphDocumentStore tinkerGraphDocumentStore;
@@ -29,17 +30,18 @@ class TinkerGraphDocumentStoreTest {
         cleanTinkerGraphData();
         tinkerGraphProvider = new TinkerGraphProvider(Optional.of(GRAPH_LOCATION));
         Graph graph = tinkerGraphProvider.instantiateGraph();
+        graph.traversal().addV("author").property(T.id, AUTHOR_ID.toString()).iterate();
         tinkerGraphDocumentStore = new TinkerGraphDocumentStore(graph);
     }
 
     @Test
     void testSaveAndFindDocument() {
-        UUID uuid = UUID.randomUUID();
-        DocumentDto savedDocument = new DocumentDto(uuid, AUTHOR, TITLE, CONTENT);
+        UUID id = UUID.randomUUID();
+        DocumentDto savedDocument = new DocumentDto(id, AUTHOR_ID, TITLE, CONTENT);
 
         tinkerGraphDocumentStore.save(savedDocument);
         restartTinkerGraph();
-        Optional<DocumentDto> foundDocument = tinkerGraphDocumentStore.find(uuid);
+        Optional<DocumentDto> foundDocument = tinkerGraphDocumentStore.find(id);
 
         assertThat(foundDocument.isPresent()).isTrue();
         assertThat(foundDocument.get()).isEqualTo(savedDocument);
@@ -47,8 +49,8 @@ class TinkerGraphDocumentStoreTest {
 
     @Test
     void testSaveAndFindAllDocuments() {
-        UUID uuid = UUID.randomUUID();
-        DocumentDto savedDocument = new DocumentDto(uuid, AUTHOR, TITLE, CONTENT);
+        UUID id = UUID.randomUUID();
+        DocumentDto savedDocument = new DocumentDto(id, AUTHOR_ID, TITLE, CONTENT);
 
         tinkerGraphDocumentStore.save(savedDocument);
         restartTinkerGraph();
@@ -59,14 +61,14 @@ class TinkerGraphDocumentStoreTest {
 
     @Test
     void testSaveAndDeleteAndFindDocument() {
-        UUID uuid = UUID.randomUUID();
-        DocumentDto savedDocument = new DocumentDto(uuid, AUTHOR, TITLE, CONTENT);
+        UUID id = UUID.randomUUID();
+        DocumentDto savedDocument = new DocumentDto(id, AUTHOR_ID, TITLE, CONTENT);
 
         tinkerGraphDocumentStore.save(savedDocument);
         restartTinkerGraph();
-        tinkerGraphDocumentStore.delete(uuid);
+        tinkerGraphDocumentStore.delete(id);
         restartTinkerGraph();
-        Optional<DocumentDto> foundDocument = tinkerGraphDocumentStore.find(uuid);
+        Optional<DocumentDto> foundDocument = tinkerGraphDocumentStore.find(id);
 
         assertThat(foundDocument.isPresent()).isFalse();
     }

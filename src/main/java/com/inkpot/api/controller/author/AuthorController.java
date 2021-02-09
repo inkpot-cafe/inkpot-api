@@ -32,9 +32,9 @@ public class AuthorController {
     }
 
     @GET
-    @Path("/{uuid}")
-    public Response findAuthor(@PathParam("uuid") UUID uuid) {
-        Optional<Author> author = coreContext.authorService().findAuthor(uuid);
+    @Path("/{id}")
+    public Response findAuthor(@PathParam("id") UUID id) {
+        Optional<Author> author = coreContext.authorService().findAuthor(id);
         return author.map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
     }
 
@@ -44,9 +44,9 @@ public class AuthorController {
     }
 
     @DELETE
-    @Path("/{uuid}")
-    public Response deleteAuthor(@PathParam("uuid") UUID uuid) {
-        coreContext.authorService().deleteAuthor(uuid);
+    @Path("/{id}")
+    public Response deleteAuthor(@PathParam("id") UUID id) {
+        coreContext.authorService().deleteAuthor(id);
         return Response.ok().build();
     }
 

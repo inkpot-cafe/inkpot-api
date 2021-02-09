@@ -27,9 +27,12 @@ import static org.mockito.Mockito.*;
 class DocumentsControllerTest {
 
     public static final String DOCUMENTS_ENDPOINT = "/documents";
-    public static final String AUTHOR_VALUE = "author";
+    public static final UUID AUTHOR_ID_VALUE = UUID.randomUUID();
     public static final String TITLE_VALUE = "title";
     public static final String CONTENT_VALUE = "content";
+    public static final String AUTHOR_ID = "authorId";
+    public static final String TITLE = "title";
+    public static final String CONTENT = "content";
 
     @Mock
     DocumentService documentService;
@@ -48,13 +51,13 @@ class DocumentsControllerTest {
 
     @Test
     void createDocument() {
-        UUID uuid = UUID.randomUUID();
-        when(documentService.createDocument(any())).thenReturn(aDocument(uuid));
+        UUID id = UUID.randomUUID();
+        when(documentService.createDocument(any())).thenReturn(aDocument(id));
 
         String json = new JSONObject()
-                .put("author", AUTHOR_VALUE)
-                .put("title", TITLE_VALUE)
-                .put("content", CONTENT_VALUE).toString();
+                .put(AUTHOR_ID, AUTHOR_ID_VALUE)
+                .put(TITLE, TITLE_VALUE)
+                .put(CONTENT, CONTENT_VALUE).toString();
         String body = RestAssured
                 .given()
                 .contentType(ContentType.JSON)
@@ -67,10 +70,10 @@ class DocumentsControllerTest {
                 .extract().body().asString();
 
         JSONObject jsonBody = new JSONObject(body);
-        assertThat(jsonBody.get("uuid")).isEqualTo(uuid.toString());
-        assertThat(jsonBody.get("author")).isEqualTo(AUTHOR_VALUE);
-        assertThat(jsonBody.get("title")).isEqualTo(TITLE_VALUE);
-        assertThat(jsonBody.get("content")).isEqualTo(CONTENT_VALUE);
+        assertThat(jsonBody.get("id")).isEqualTo(id.toString());
+        assertThat(jsonBody.get(AUTHOR_ID)).isEqualTo(AUTHOR_ID_VALUE.toString());
+        assertThat(jsonBody.get(TITLE)).isEqualTo(TITLE_VALUE);
+        assertThat(jsonBody.get(CONTENT)).isEqualTo(CONTENT_VALUE);
 
         verify(documentService).createDocument(any());
         verify(documentsController).createDocument(any());
@@ -78,51 +81,51 @@ class DocumentsControllerTest {
 
     @Test
     void findDocument() {
-        UUID uuid = UUID.randomUUID();
-        when(documentService.findDocument(uuid)).thenReturn(Optional.of(aDocument(uuid)));
+        UUID id = UUID.randomUUID();
+        when(documentService.findDocument(id)).thenReturn(Optional.of(aDocument(id)));
 
         String body = RestAssured
                 .given()
-                .pathParam("uuid", uuid)
+                .pathParam("id", id)
                 .when()
-                .get(DOCUMENTS_ENDPOINT + "/{uuid}")
+                .get(DOCUMENTS_ENDPOINT + "/{id}")
                 .then()
                 .assertThat()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .extract().body().asString();
 
         JSONObject jsonBody = new JSONObject(body);
-        assertThat(jsonBody.get("uuid")).isEqualTo(uuid.toString());
-        assertThat(jsonBody.get("author")).isEqualTo(AUTHOR_VALUE);
-        assertThat(jsonBody.get("title")).isEqualTo(TITLE_VALUE);
-        assertThat(jsonBody.get("content")).isEqualTo(CONTENT_VALUE);
+        assertThat(jsonBody.get("id")).isEqualTo(id.toString());
+        assertThat(jsonBody.get(AUTHOR_ID)).isEqualTo(AUTHOR_ID_VALUE.toString());
+        assertThat(jsonBody.get(TITLE)).isEqualTo(TITLE_VALUE);
+        assertThat(jsonBody.get(CONTENT)).isEqualTo(CONTENT_VALUE);
 
-        verify(documentService).findDocument(uuid);
-        verify(documentsController).findDocument(eq(uuid));
+        verify(documentService).findDocument(id);
+        verify(documentsController).findDocument(eq(id));
     }
 
     @Test
     void findDocumentNotFound() {
-        UUID uuid = UUID.randomUUID();
-        when(documentService.findDocument(uuid)).thenReturn(Optional.empty());
+        UUID id = UUID.randomUUID();
+        when(documentService.findDocument(id)).thenReturn(Optional.empty());
 
         RestAssured
                 .given()
-                .pathParam("uuid", uuid)
+                .pathParam("id", id)
                 .when()
-                .get(DOCUMENTS_ENDPOINT + "/{uuid}")
+                .get(DOCUMENTS_ENDPOINT + "/{id}")
                 .then()
                 .assertThat()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
 
-        verify(documentService).findDocument(uuid);
-        verify(documentsController).findDocument(eq(uuid));
+        verify(documentService).findDocument(id);
+        verify(documentsController).findDocument(eq(id));
     }
 
     @Test
     void findAllDocuments() {
-        UUID uuid = UUID.randomUUID();
-        when(documentService.findAllDocuments()).thenReturn(Set.of(aDocument(uuid)));
+        UUID id = UUID.randomUUID();
+        when(documentService.findAllDocuments()).thenReturn(Set.of(aDocument(id)));
 
         String body = RestAssured
                 .given()
@@ -135,10 +138,10 @@ class DocumentsControllerTest {
 
         JSONArray jsonBody = new JSONArray(body);
         assertThat(jsonBody.length()).isEqualTo(1);
-        assertThat(jsonBody.getJSONObject(0).get("uuid")).isEqualTo(uuid.toString());
-        assertThat(jsonBody.getJSONObject(0).get("author")).isEqualTo(AUTHOR_VALUE);
-        assertThat(jsonBody.getJSONObject(0).get("title")).isEqualTo(TITLE_VALUE);
-        assertThat(jsonBody.getJSONObject(0).get("content")).isEqualTo(CONTENT_VALUE);
+        assertThat(jsonBody.getJSONObject(0).get("id")).isEqualTo(id.toString());
+        assertThat(jsonBody.getJSONObject(0).get(AUTHOR_ID)).isEqualTo(AUTHOR_ID_VALUE.toString());
+        assertThat(jsonBody.getJSONObject(0).get(TITLE)).isEqualTo(TITLE_VALUE);
+        assertThat(jsonBody.getJSONObject(0).get(CONTENT)).isEqualTo(CONTENT_VALUE);
 
         verify(documentService).findAllDocuments();
         verify(documentsController).findAllDocuments();
@@ -146,24 +149,24 @@ class DocumentsControllerTest {
 
     @Test
     void deleteDocument() {
-        UUID uuid = UUID.randomUUID();
-        when(documentService.findDocument(uuid)).thenReturn(Optional.of(aDocument(uuid)));
+        UUID id = UUID.randomUUID();
+        when(documentService.findDocument(id)).thenReturn(Optional.of(aDocument(id)));
 
         RestAssured
                 .given()
-                .pathParam("uuid", uuid)
+                .pathParam("id", id)
                 .when()
-                .delete(DOCUMENTS_ENDPOINT + "/{uuid}")
+                .delete(DOCUMENTS_ENDPOINT + "/{id}")
                 .then()
                 .assertThat()
                 .statusCode(Response.Status.OK.getStatusCode());
 
-        verify(documentService).deleteDocument(uuid);
-        verify(documentsController).deleteDocument(eq(uuid));
+        verify(documentService).deleteDocument(id);
+        verify(documentsController).deleteDocument(eq(id));
     }
 
-    private Document aDocument(UUID uuid) {
-        return new Document(uuid, AUTHOR_VALUE, TITLE_VALUE, CONTENT_VALUE);
+    private Document aDocument(UUID id) {
+        return new Document(id, AUTHOR_ID_VALUE, TITLE_VALUE, CONTENT_VALUE);
     }
 
 }

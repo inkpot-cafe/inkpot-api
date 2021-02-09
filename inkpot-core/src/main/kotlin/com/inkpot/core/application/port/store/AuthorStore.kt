@@ -9,4 +9,4 @@ interface AuthorStore {
     fun delete(uuid: UUID)
 }
 
-data class AuthorDto(val uuid: UUID, val name: String)
+data class AuthorDto(val id: UUID, val name: String, val documentIds: Set<UUID>)

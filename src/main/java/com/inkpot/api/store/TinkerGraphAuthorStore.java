@@ -2,19 +2,19 @@ package com.inkpot.api.store;
 
 import com.inkpot.core.application.port.store.AuthorDto;
 import com.inkpot.core.application.port.store.AuthorStore;
-import org.apache.tinkerpop.gremlin.structure.Graph;
-import org.apache.tinkerpop.gremlin.structure.T;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class TinkerGraphAuthorStore implements AuthorStore {
@@ -22,6 +22,7 @@ public class TinkerGraphAuthorStore implements AuthorStore {
     private static final Logger LOGGER = LoggerFactory.getLogger(TinkerGraphAuthorStore.class);
     public static final String AUTHOR = "author";
     public static final String NAME = "name";
+    public static final String WRITES = "writes";
 
     private final Graph graph;
 
@@ -33,10 +34,10 @@ public class TinkerGraphAuthorStore implements AuthorStore {
     @Override
     public void save(AuthorDto author) {
         graph.traversal().addV(AUTHOR)
-                .property(T.id, author.getUuid().toString())
+                .property(T.id, author.getId().toString())
                 .property(NAME, author.getName())
                 .iterate();
-        LOGGER.info("Saved Author with id: {}", author.getUuid());
+        LOGGER.info("Saved Author with id: {}", author.getId());
 
     }
 
@@ -46,7 +47,7 @@ public class TinkerGraphAuthorStore implements AuthorStore {
                 .hasLabel(AUTHOR)
                 .hasId(uuid.toString())
                 .tryNext()
-                .map(toAuthorDto());
+                .map(this::toAuthorDto);
     }
 
     @Override
@@ -54,8 +55,8 @@ public class TinkerGraphAuthorStore implements AuthorStore {
         return graph.traversal().V()
                 .hasLabel(AUTHOR)
                 .toStream()
-                .map(toAuthorDto())
-                .collect(Collectors.toSet());
+                .map(this::toAuthorDto)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -68,8 +69,21 @@ public class TinkerGraphAuthorStore implements AuthorStore {
 
     }
 
-    private Function<Vertex, AuthorDto> toAuthorDto() {
-        return v -> new AuthorDto(UUID.fromString(v.id().toString()), v.property(NAME).value().toString());
+    private AuthorDto toAuthorDto(Vertex v) {
+        return new AuthorDto(
+                UUID.fromString(v.id().toString()),
+                v.property(NAME).value().toString(),
+                getDocumentIds(v)
+        );
+    }
+
+    private Set<UUID> getDocumentIds(Vertex v) {
+        Iterator<Edge> edges = v.edges(Direction.OUT, WRITES);
+        return Stream.iterate(edges, Iterator::hasNext, UnaryOperator.identity())
+                .map(Iterator::next)
+                .map(e -> e.inVertex().id().toString())
+                .map(UUID::fromString)
+                .collect(Collectors.toSet());
     }
 
 }

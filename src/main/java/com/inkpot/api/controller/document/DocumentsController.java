@@ -32,8 +32,8 @@ public class DocumentsController {
     }
 
     @GET
-    @Path("/{uuid}")
-    public Response findDocument(@PathParam("uuid") UUID uuid) {
+    @Path("/{id}")
+    public Response findDocument(@PathParam("id") UUID uuid) {
         Optional<Document> document = context.documentService().findDocument(uuid);
         return document.map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
     }
@@ -44,15 +44,15 @@ public class DocumentsController {
     }
 
     @DELETE
-    @Path("/{uuid}")
-    public Response deleteDocument(@PathParam("uuid") UUID uuid) {
+    @Path("/{id}")
+    public Response deleteDocument(@PathParam("id") UUID uuid) {
         context.documentService().deleteDocument(uuid);
         return Response.ok().build();
     }
 
     private DocumentCreateData toDocumentCreateData(DocumentCreateRequest request) {
         return new DocumentCreateData(
-                request.getAuthor(),
+                request.getAuthorId(),
                 request.getTitle(),
                 request.getContent()
         );

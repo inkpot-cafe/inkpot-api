@@ -1,6 +1,8 @@
 package com.inkpot.core.application.port.service
 
 import com.inkpot.core.application.InkpotCore
+import com.inkpot.core.application.port.store.AuthorDto
+import com.inkpot.core.application.port.store.AuthorStore
 import com.inkpot.core.application.port.store.DocumentDto
 import com.inkpot.core.application.port.store.DocumentStore
 import com.nhaarman.mockitokotlin2.argumentCaptor
@@ -15,23 +17,26 @@ import java.util.*
 internal class DocumentServiceTest {
 
     companion object {
-        private const val AUTHOR = "author"
         private const val TITLE = "title"
         private const val CONTENT = "content"
     }
 
+    private lateinit var authorStore: AuthorStore
     private lateinit var documentStore: DocumentStore
     private lateinit var documentService: DocumentService
 
     @BeforeEach
     internal fun setUp() {
         documentStore = mock()
-        documentService = InkpotCore.createContext(mock(), documentStore).documentService()
+        authorStore = mock()
+        documentService = InkpotCore.createContext(authorStore, documentStore).documentService()
     }
 
     @Test
     internal fun createDocument() {
-        val createDocument = DocumentCreateData(AUTHOR, TITLE, CONTENT)
+        val authorId = UUID.randomUUID()
+        val createDocument = DocumentCreateData(authorId, TITLE, CONTENT)
+        whenever(authorStore.find(authorId)).thenReturn(Optional.of(aAuthorDto(authorId)))
 
         val document = documentService.createDocument(createDocument)
 
@@ -39,16 +44,16 @@ internal class DocumentServiceTest {
         argumentCaptor<DocumentDto>().apply {
             verify(documentStore).save(capture())
 
-            uuid = firstValue.uuid
+            uuid = firstValue.id
             assertNotNull(uuid)
-            assertEquals(AUTHOR, firstValue.author)
+            assertEquals(authorId, firstValue.authorId)
             assertEquals(TITLE, firstValue.title)
             assertEquals(CONTENT, firstValue.content)
         }
 
-        assertNotNull(document.uuid)
-        assertEquals(uuid, document.uuid)
-        assertEquals(AUTHOR, document.author)
+        assertNotNull(document.id)
+        assertEquals(uuid, document.id)
+        assertEquals(authorId, document.authorId)
         assertEquals(TITLE, document.title)
         assertEquals(CONTENT, document.content)
     }
@@ -56,7 +61,8 @@ internal class DocumentServiceTest {
     @Test
     internal fun `find an existing document`() {
         val uuid = UUID.randomUUID()
-        whenever(documentStore.find(uuid)).thenReturn(Optional.of(DocumentDto(uuid, AUTHOR, TITLE, CONTENT)))
+        val authorId = UUID.randomUUID()
+        whenever(documentStore.find(uuid)).thenReturn(Optional.of(aDocumentDto(uuid, authorId)))
 
         val document = documentService.findDocument(uuid)
 
@@ -67,8 +73,8 @@ internal class DocumentServiceTest {
         }
 
         assertNotNull(document)
-        assertEquals(uuid, document.get().uuid)
-        assertEquals(AUTHOR, document.get().author)
+        assertEquals(uuid, document.get().id)
+        assertEquals(authorId, document.get().authorId)
         assertEquals(TITLE, document.get().title)
         assertEquals(CONTENT, document.get().content)
     }
@@ -91,34 +97,22 @@ internal class DocumentServiceTest {
 
     @Test
     internal fun `find all documents`() {
-        val uuid0 = UUID.randomUUID()
-        val uuid1 = UUID.randomUUID()
+        val uuid = UUID.randomUUID()
+        val authorId = UUID.randomUUID()
         whenever(documentStore.findAll())
-                .thenReturn(
-                        setOf(
-                                DocumentDto(uuid0, "${AUTHOR}0", "${TITLE}0", "${CONTENT}0"),
-                                DocumentDto(uuid1, "${AUTHOR}1", "${TITLE}1", "${CONTENT}1")
-                        )
-                )
-
+            .thenReturn(setOf(aDocumentDto(uuid, authorId)))
 
         val documents = documentService.findAllDocuments()
 
         verify(documentStore).findAll()
 
-        assertEquals(2, documents.size)
+        assertEquals(1, documents.size)
 
-        val document0 = documents.elementAt(0)
-        assertEquals(uuid0, document0.uuid)
-        assertEquals("${AUTHOR}0", document0.author)
-        assertEquals("${TITLE}0", document0.title)
-        assertEquals("${CONTENT}0", document0.content)
-
-        val document1 = documents.elementAt(1)
-        assertEquals(uuid1, document1.uuid)
-        assertEquals("${AUTHOR}1", document1.author)
-        assertEquals("${TITLE}1", document1.title)
-        assertEquals("${CONTENT}1", document1.content)
+        val document = documents.elementAt(0)
+        assertEquals(uuid, document.id)
+        assertEquals(authorId, document.authorId)
+        assertEquals(TITLE, document.title)
+        assertEquals(CONTENT, document.content)
     }
 
     @Test
@@ -134,4 +128,7 @@ internal class DocumentServiceTest {
         }
     }
 
+    private fun aDocumentDto(uuid: UUID, authorId: UUID) = DocumentDto(uuid, authorId, TITLE, CONTENT)
+
+    private fun aAuthorDto(authorId: UUID) = AuthorDto(authorId, "name")
 }

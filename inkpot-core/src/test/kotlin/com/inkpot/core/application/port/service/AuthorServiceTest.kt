@@ -37,13 +37,13 @@ internal class AuthorServiceTest {
         argumentCaptor<AuthorDto>().apply {
             verify(authorStore).save(capture())
 
-            uuid = firstValue.uuid
+            uuid = firstValue.id
             assertNotNull(uuid)
             assertEquals(NAME, firstValue.name)
         }
         assertNotNull(author)
         assertEquals(author.name, NAME)
-        assertEquals(author.uuid, uuid)
+        assertEquals(author.id, uuid)
     }
 
     @Test
@@ -56,7 +56,7 @@ internal class AuthorServiceTest {
         verify(authorStore).find(uuid)
 
         assertTrue(author.isPresent)
-        assertEquals(author.get().uuid, uuid)
+        assertEquals(author.get().id, uuid)
         assertEquals(author.get().name, NAME)
     }
 
@@ -82,7 +82,7 @@ internal class AuthorServiceTest {
         verify(authorStore).findAll()
 
         assertEquals(1, authors.size)
-        assertEquals(uuid, authors.elementAt(0).uuid)
+        assertEquals(uuid, authors.elementAt(0).id)
         assertEquals(NAME, authors.elementAt(0).name)
     }
 

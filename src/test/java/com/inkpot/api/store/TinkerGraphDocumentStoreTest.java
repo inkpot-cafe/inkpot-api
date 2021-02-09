@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TinkerGraphDocumentStoreTest {
 
     public static final String GRAPH_LOCATION = "graph.kryo";
-    public static final String AUTHOR = "author";
+    public static final UUID AUTHOR_ID = UUID.randomUUID();
     public static final String TITLE = "title";
     public static final String CONTENT = "content";
     private TinkerGraphDocumentStore tinkerGraphDocumentStore;
@@ -34,12 +34,13 @@ class TinkerGraphDocumentStoreTest {
 
     @Test
     void testSaveAndFindDocument() {
-        UUID uuid = UUID.randomUUID();
-        DocumentDto savedDocument = new DocumentDto(uuid, AUTHOR, TITLE, CONTENT);
+        UUID id = UUID.randomUUID();
+        UUID authorId = UUID.randomUUID();
+        DocumentDto savedDocument = new DocumentDto(id, authorId, TITLE, CONTENT);
 
         tinkerGraphDocumentStore.save(savedDocument);
         restartTinkerGraph();
-        Optional<DocumentDto> foundDocument = tinkerGraphDocumentStore.find(uuid);
+        Optional<DocumentDto> foundDocument = tinkerGraphDocumentStore.find(id);
 
         assertThat(foundDocument.isPresent()).isTrue();
         assertThat(foundDocument.get()).isEqualTo(savedDocument);
@@ -48,7 +49,7 @@ class TinkerGraphDocumentStoreTest {
     @Test
     void testSaveAndFindAllDocuments() {
         UUID uuid = UUID.randomUUID();
-        DocumentDto savedDocument = new DocumentDto(uuid, AUTHOR, TITLE, CONTENT);
+        DocumentDto savedDocument = new DocumentDto(uuid, AUTHOR_ID, TITLE, CONTENT);
 
         tinkerGraphDocumentStore.save(savedDocument);
         restartTinkerGraph();
@@ -60,7 +61,7 @@ class TinkerGraphDocumentStoreTest {
     @Test
     void testSaveAndDeleteAndFindDocument() {
         UUID uuid = UUID.randomUUID();
-        DocumentDto savedDocument = new DocumentDto(uuid, AUTHOR, TITLE, CONTENT);
+        DocumentDto savedDocument = new DocumentDto(uuid, AUTHOR_ID, TITLE, CONTENT);
 
         tinkerGraphDocumentStore.save(savedDocument);
         restartTinkerGraph();

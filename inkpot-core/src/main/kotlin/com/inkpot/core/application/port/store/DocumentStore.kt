@@ -10,8 +10,8 @@ interface DocumentStore {
 }
 
 data class DocumentDto(
-        val uuid: UUID,
-        val author: String,
-        val title: String,
-        val content: String
+    val id: UUID,
+    val authorId: UUID,
+    val title: String,
+    val content: String
 )

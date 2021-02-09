@@ -1,9 +1,7 @@
-package com.inkpot.core.domain.repository
+package com.inkpot.core.domain.author
 
 import com.inkpot.core.application.port.store.AuthorDto
 import com.inkpot.core.application.port.store.AuthorStore
-import com.inkpot.core.domain.aggregate.AuthorAggregate
-import com.inkpot.core.domain.aggregate.AuthorId
 import java.util.*
 
 internal class AuthorRepository(private val authorStore: AuthorStore) {
@@ -16,7 +14,7 @@ internal class AuthorRepository(private val authorStore: AuthorStore) {
 
     fun delete(uuid: UUID) = authorStore.delete(uuid)
 
-    private fun toAuthorDto(aggregate: AuthorAggregate) = AuthorDto(aggregate.id.uuid, aggregate.name)
+    private fun toAuthorDto(aggregate: AuthorAggregate) = AuthorDto(aggregate.id, aggregate.name)
 
-    private fun toAuthor(authorDto: AuthorDto) = AuthorAggregate(AuthorId(authorDto.uuid), authorDto.name)
+    private fun toAuthor(authorDto: AuthorDto) = AuthorAggregate(authorDto.id, authorDto.name)
 }

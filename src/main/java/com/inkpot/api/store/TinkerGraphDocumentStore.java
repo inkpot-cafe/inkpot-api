@@ -36,12 +36,12 @@ public class TinkerGraphDocumentStore implements DocumentStore {
     @Override
     public void save(DocumentDto document) {
         graph.traversal().addV(DOCUMENT)
-                .property(T.id, document.getUuid().toString())
+                .property(T.id, document.getId().toString())
                 .property(TITLE, document.getTitle())
-                .property(AUTHOR, document.getAuthor())
+                .property(AUTHOR, document.getAuthorId())
                 .property(CONTENT, document.getContent())
                 .iterate();
-        LOGGER.info("Saved Document with id: {}", document.getUuid());
+        LOGGER.info("Saved Document with id: {}", document.getId());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class TinkerGraphDocumentStore implements DocumentStore {
     private Function<Vertex, DocumentDto> toDocumentDto() {
         return v -> new DocumentDto(
                 UUID.fromString(v.id().toString()),
-                v.property(AUTHOR).value().toString(),
+                UUID.fromString(v.property(AUTHOR).value().toString()),
                 v.property(TITLE).value().toString(),
                 v.property(CONTENT).value().toString());
     }

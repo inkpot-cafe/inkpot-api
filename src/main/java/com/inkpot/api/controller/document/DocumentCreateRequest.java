@@ -1,17 +1,19 @@
 package com.inkpot.api.controller.document;
 
+import java.util.UUID;
+
 public class DocumentCreateRequest {
 
-    private String author;
+    private UUID authorId;
     private String title;
     private String content;
 
-    public String getAuthor() {
-        return author;
+    public UUID getAuthorId() {
+        return authorId;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setAuthorId(UUID authorId) {
+        this.authorId = authorId;
     }
 
     public String getTitle() {

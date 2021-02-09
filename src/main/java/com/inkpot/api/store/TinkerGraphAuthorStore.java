@@ -33,10 +33,10 @@ public class TinkerGraphAuthorStore implements AuthorStore {
     @Override
     public void save(AuthorDto author) {
         graph.traversal().addV(AUTHOR)
-                .property(T.id, author.getUuid().toString())
+                .property(T.id, author.getId().toString())
                 .property(NAME, author.getName())
                 .iterate();
-        LOGGER.info("Saved Author with id: {}", author.getUuid());
+        LOGGER.info("Saved Author with id: {}", author.getId());
 
     }
 

@@ -2,7 +2,6 @@ package com.inkpot.core.domain.document
 
 import com.inkpot.core.domain.DomainClass
 import com.inkpot.core.domain.DomainContext
-import com.inkpot.core.domain.author.AuthorRepository
 import java.util.*
 
 internal class DocumentAggregateFactory(domainContext: DomainContext) :

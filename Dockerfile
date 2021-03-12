@@ -1,8 +1,23 @@
-FROM gradle:jre14 AS build
-COPY . .
-RUN ./gradlew build
+## Stage 1 : build with maven builder image with native capabilities
+FROM quay.io/quarkus/centos-quarkus-maven:21.0.0-java11 AS build
+COPY . /usr/src/app/
+USER root
+RUN chown -R quarkus /usr/src/app
+USER quarkus
+RUN gradle -b /usr/src/app/build.gradle clean buildNative
 
-FROM openjdk:14-alpine
-COPY --from=build /home/gradle/build/inkpot-api-1.0-SNAPSHOT-runner.jar inkpot-api-1.0-SNAPSHOT-runner.jar
-COPY --from=build /home/gradle/build/lib lib
-CMD java -jar inkpot-api-1.0-SNAPSHOT-runner.jar
+## Stage 2 : create the docker final image
+FROM registry.access.redhat.com/ubi8/ubi-minimal
+WORKDIR /work/
+COPY --from=build /usr/src/app/build/*-runner /work/application
+
+# set up permissions for user `1001`
+RUN chmod 775 /work /work/application \
+  && chown -R 1001 /work \
+  && chmod -R "g+rwX" /work \
+  && chown -R 1001:root /work
+
+EXPOSE 8080
+USER 1001
+
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]

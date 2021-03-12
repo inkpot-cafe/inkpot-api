@@ -29,7 +29,7 @@ spec:
             - containerPort: 8080
               protocol: TCP
           volumeMounts:
-            - mountPath: /graph
+            - mountPath: /work/data
               name: inkpot-pd
       volumes:
         - name: inkpot-pd

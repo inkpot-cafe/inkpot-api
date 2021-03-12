@@ -12,6 +12,7 @@ WORKDIR /work/
 COPY --from=build /usr/src/app/build/*-runner /work/application
 
 # set up permissions for user `1001`
+RUN mkdir /work/data
 RUN chmod 775 /work /work/application \
   && chown -R 1001 /work \
   && chmod -R "g+rwX" /work \

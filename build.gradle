@@ -16,10 +16,10 @@ dependencies {
 
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-resteasy-jackson'
-    implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-resteasy'
+    implementation 'io.quarkus:quarkus-kotlin'
 
-    implementation 'org.apache.tinkerpop:tinkergraph-gremlin:3.4.10'
+    implementation 'org.apache.tinkerpop:tinkergraph-gremlin'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.quarkus:quarkus-junit5-mockito'

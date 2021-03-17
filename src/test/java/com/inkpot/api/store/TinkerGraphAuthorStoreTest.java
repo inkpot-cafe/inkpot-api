@@ -1,7 +1,7 @@
 package com.inkpot.api.store;
 
 import com.inkpot.core.application.port.store.AuthorDto;
-import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,8 +28,8 @@ class TinkerGraphAuthorStoreTest {
     void setUp() throws IOException {
         cleanTinkerGraphData();
         tinkerGraphProvider = new TinkerGraphProvider(Optional.of(GRAPH_LOCATION));
-        Graph graph = tinkerGraphProvider.instantiateGraph();
-        tinkerGraphAuthorStore = new TinkerGraphAuthorStore(graph);
+        GraphTraversalSource g = tinkerGraphProvider.instantiateGraph();
+        tinkerGraphAuthorStore = new TinkerGraphAuthorStore(g);
     }
 
     @Test

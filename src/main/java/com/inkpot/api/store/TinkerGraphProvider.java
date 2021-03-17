@@ -1,8 +1,10 @@
 package com.inkpot.api.store;
 
 import io.quarkus.runtime.Startup;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -15,8 +17,11 @@ import javax.inject.Inject;
 import javax.ws.rs.Produces;
 import java.util.Optional;
 
+import static org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource.traversal;
+
 @Startup
 @ApplicationScoped
+@RegisterForReflection(targets = {GraphTraversalSource.class, TinkerGraph.class})
 public class TinkerGraphProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TinkerGraphProvider.class);
@@ -32,16 +37,16 @@ public class TinkerGraphProvider {
     @Startup
     @Produces
     @ApplicationScoped
-    public Graph instantiateGraph() {
+    public GraphTraversalSource instantiateGraph() {
         Configuration configuration = new BaseConfiguration();
         configuration.setProperty(Graph.GRAPH, "org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph");
         if (graphLocation.isPresent()) {
             configuration.setProperty("gremlin.tinkergraph.graphLocation", graphLocation.get());
-            configuration.setProperty("gremlin.tinkergraph.graphFormat", "gryo");
+            configuration.setProperty("gremlin.tinkergraph.graphFormat", "graphson");
         }
         graph = TinkerGraph.open(configuration);
         LOGGER.info("TinkerGraph created");
-        return graph;
+        return traversal().withEmbedded(graph);
     }
 
     @PreDestroy

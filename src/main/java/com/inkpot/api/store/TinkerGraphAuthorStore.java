@@ -2,7 +2,11 @@ package com.inkpot.api.store;
 
 import com.inkpot.core.application.port.store.AuthorDto;
 import com.inkpot.core.application.port.store.AuthorStore;
-import org.apache.tinkerpop.gremlin.structure.*;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.T;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,16 +28,16 @@ public class TinkerGraphAuthorStore implements AuthorStore {
     public static final String NAME = "name";
     public static final String WRITES = "writes";
 
-    private final Graph graph;
+    private final GraphTraversalSource g;
 
     @Inject
-    public TinkerGraphAuthorStore(Graph graph) {
-        this.graph = graph;
+    public TinkerGraphAuthorStore(GraphTraversalSource g) {
+        this.g = g;
     }
 
     @Override
     public void save(AuthorDto author) {
-        graph.traversal().addV(AUTHOR)
+        g.addV(AUTHOR)
                 .property(T.id, author.getId().toString())
                 .property(NAME, author.getName())
                 .iterate();
@@ -43,7 +47,7 @@ public class TinkerGraphAuthorStore implements AuthorStore {
 
     @Override
     public Optional<AuthorDto> find(UUID uuid) {
-        return graph.traversal().V()
+        return g.V()
                 .hasLabel(AUTHOR)
                 .hasId(uuid.toString())
                 .tryNext()
@@ -52,7 +56,7 @@ public class TinkerGraphAuthorStore implements AuthorStore {
 
     @Override
     public Set<AuthorDto> findAll() {
-        return graph.traversal().V()
+        return g.V()
                 .hasLabel(AUTHOR)
                 .toStream()
                 .map(this::toAuthorDto)
@@ -61,7 +65,7 @@ public class TinkerGraphAuthorStore implements AuthorStore {
 
     @Override
     public void delete(UUID uuid) {
-        graph.traversal().V()
+        g.V()
                 .hasLabel(AUTHOR)
                 .hasId(uuid.toString())
                 .drop().iterate();

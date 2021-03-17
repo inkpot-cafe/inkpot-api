@@ -1,16 +1,15 @@
 ## Stage 1 : build with maven builder image with native capabilities
-FROM quay.io/quarkus/centos-quarkus-maven:21.0.0-java11 AS build
+FROM quay.io/quarkus/centos-quarkus-maven:21.0.0.2-java11 AS build
 COPY . /usr/src/app/
 USER root
 RUN chown -R quarkus /usr/src/app
 USER quarkus
-RUN gradle -b /usr/src/app/build.gradle clean buildNative
+RUN gradle -b /usr/src/app/build.gradle buildNative
 
 ## Stage 2 : create the docker final image
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 WORKDIR /work/
 COPY --from=build /usr/src/app/build/*-runner /work/application
-COPY --from=build /usr/src/app/build/lib /work/lib
 
 # set up permissions for user `1001`
 RUN mkdir /work/data

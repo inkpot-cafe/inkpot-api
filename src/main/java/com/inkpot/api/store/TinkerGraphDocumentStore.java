@@ -2,8 +2,8 @@ package com.inkpot.api.store;
 
 import com.inkpot.core.application.port.store.DocumentDto;
 import com.inkpot.core.application.port.store.DocumentStore;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.slf4j.Logger;
@@ -27,16 +27,16 @@ public class TinkerGraphDocumentStore implements DocumentStore {
     public static final String DOCUMENT = "document";
     public static final String WRITES = "writes";
 
-    private final Graph graph;
+    private final GraphTraversalSource g;
 
     @Inject
-    public TinkerGraphDocumentStore(Graph graph) {
-        this.graph = graph;
+    public TinkerGraphDocumentStore(GraphTraversalSource g) {
+        this.g = g;
     }
 
     @Override
     public void save(DocumentDto document) {
-        graph.traversal().addV(DOCUMENT)
+        g.addV(DOCUMENT)
                 .as(DOCUMENT)
                 .property(T.id, document.getId().toString())
                 .property(TITLE, document.getTitle())
@@ -52,7 +52,7 @@ public class TinkerGraphDocumentStore implements DocumentStore {
 
     @Override
     public Optional<DocumentDto> find(UUID id) {
-        return graph.traversal().V()
+        return g.V()
                 .hasLabel(DOCUMENT)
                 .hasId(id.toString())
                 .tryNext()
@@ -61,7 +61,7 @@ public class TinkerGraphDocumentStore implements DocumentStore {
 
     @Override
     public Set<DocumentDto> findAll() {
-        return graph.traversal().V()
+        return g.V()
                 .hasLabel(DOCUMENT)
                 .toStream()
                 .map(this::toDocumentDto)
@@ -70,7 +70,7 @@ public class TinkerGraphDocumentStore implements DocumentStore {
 
     @Override
     public void delete(UUID id) {
-        graph.traversal().V()
+        g.V()
                 .hasLabel(DOCUMENT)
                 .hasId(id.toString())
                 .drop().iterate();

@@ -1,8 +1,9 @@
 package com.inkpot.api.controller.document;
 
 import com.inkpot.core.application.CoreContext;
-import com.inkpot.core.application.port.service.DocumentCreateData;
 import com.inkpot.core.application.port.service.Document;
+import com.inkpot.core.application.port.service.DocumentCreateData;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
+@RegisterForReflection(targets = {Document.class})
 public class DocumentsController {
 
     private final CoreContext context;

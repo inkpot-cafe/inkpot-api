@@ -49,8 +49,16 @@ jobs:
     - run: |-
         gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 
-    # Build the Docker image
-    - name: Build
+    - name: Grant execute permission for gradlew
+      run: |-
+        chmod +x gradlew
+
+    - name: Build native quarkus with Gradle
+      run: |-
+        ./gradlew clean build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
+
+      # Build the Docker image
+    - name: Build Docker image
       run: |-
         docker build \
           --tag "eu.gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \

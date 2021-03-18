@@ -6,6 +6,7 @@ import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyGraph;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ import static org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalS
 
 @Startup
 @ApplicationScoped
-@RegisterForReflection(targets = {GraphTraversalSource.class, TinkerGraph.class})
+@RegisterForReflection(targets = {GraphTraversalSource.class, TinkerGraph.class, EmptyGraph.class})
 public class TinkerGraphProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TinkerGraphProvider.class);

@@ -3,6 +3,7 @@ package com.inkpot.api.controller.author;
 import com.inkpot.core.application.CoreContext;
 import com.inkpot.core.application.port.service.Author;
 import com.inkpot.core.application.port.service.AuthorCreateData;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
+@RegisterForReflection(targets = {Author.class})
 public class AuthorController {
 
     private final CoreContext coreContext;

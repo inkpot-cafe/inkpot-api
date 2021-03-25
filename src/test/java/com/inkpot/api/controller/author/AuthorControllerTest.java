@@ -6,6 +6,7 @@ import com.inkpot.core.application.port.service.AuthorService;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.junit.mockito.InjectSpy;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.json.JSONArray;
@@ -51,6 +52,7 @@ class AuthorControllerTest {
     }
 
     @Test
+    @TestSecurity(user = "testAdmin", roles = "admin")
     void createAuthor() {
         UUID uuid = UUID.randomUUID();
         when(authorService.createAuthor(any())).thenReturn(anAuthor(uuid));
@@ -139,6 +141,7 @@ class AuthorControllerTest {
     }
 
     @Test
+    @TestSecurity(user = "testAdmin", roles = "admin")
     void deleteAuthor() {
         UUID uuid = UUID.randomUUID();
 

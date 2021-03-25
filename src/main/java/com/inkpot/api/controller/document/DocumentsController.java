@@ -5,6 +5,7 @@ import com.inkpot.core.application.port.service.Document;
 import com.inkpot.core.application.port.service.DocumentCreateData;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -28,6 +29,7 @@ public class DocumentsController {
     }
 
     @POST
+    @RolesAllowed("author")
     public Response createDocument(DocumentCreateRequest request) {
         Document document = context.documentService().createDocument(toDocumentCreateData(request));
         return Response.ok(document).build();
@@ -47,6 +49,7 @@ public class DocumentsController {
 
     @DELETE
     @Path("/{id}")
+    @RolesAllowed("author")
     public Response deleteDocument(@PathParam("id") UUID uuid) {
         context.documentService().deleteDocument(uuid);
         return Response.ok().build();

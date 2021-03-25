@@ -5,6 +5,7 @@ import com.inkpot.core.application.port.service.Author;
 import com.inkpot.core.application.port.service.AuthorCreateData;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -28,6 +29,7 @@ public class AuthorController {
     }
 
     @POST
+    @RolesAllowed("admin")
     public Response createAuthor(AuthorCreateRequest request) {
         Author author = coreContext.authorService().createAuthor(new AuthorCreateData(request.getName()));
         return Response.ok(author).build();
@@ -47,6 +49,7 @@ public class AuthorController {
 
     @DELETE
     @Path("/{id}")
+    @RolesAllowed("admin")
     public Response deleteAuthor(@PathParam("id") UUID id) {
         coreContext.authorService().deleteAuthor(id);
         return Response.ok().build();

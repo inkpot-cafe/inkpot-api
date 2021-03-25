@@ -6,6 +6,7 @@ import com.inkpot.core.application.port.service.DocumentService;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.junit.mockito.InjectSpy;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.json.JSONArray;
@@ -50,6 +51,7 @@ class DocumentsControllerTest {
     }
 
     @Test
+    @TestSecurity(user = "testAuthor", roles = "author")
     void createDocument() {
         UUID id = UUID.randomUUID();
         when(documentService.createDocument(any())).thenReturn(aDocument(id));
@@ -148,6 +150,7 @@ class DocumentsControllerTest {
     }
 
     @Test
+    @TestSecurity(user = "testAuthor", roles = "author")
     void deleteDocument() {
         UUID id = UUID.randomUUID();
         when(documentService.findDocument(id)).thenReturn(Optional.of(aDocument(id)));

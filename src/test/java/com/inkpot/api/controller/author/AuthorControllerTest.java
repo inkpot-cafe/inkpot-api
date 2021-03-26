@@ -1,5 +1,6 @@
 package com.inkpot.api.controller.author;
 
+import com.inkpot.api.iam.Role;
 import com.inkpot.core.application.CoreContext;
 import com.inkpot.core.application.port.service.Author;
 import com.inkpot.core.application.port.service.AuthorService;
@@ -24,8 +25,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @QuarkusTest
 class AuthorControllerTest {
@@ -52,7 +52,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    @TestSecurity(user = "testAdmin", roles = "admin")
+    @TestSecurity(user = "testAdmin", roles = Role.ADMIN)
     void createAuthor() {
         UUID uuid = UUID.randomUUID();
         when(authorService.createAuthor(any())).thenReturn(anAuthor(uuid));
@@ -141,7 +141,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    @TestSecurity(user = "testAdmin", roles = "admin")
+    @TestSecurity(user = "testAdmin", roles = Role.ADMIN)
     void deleteAuthor() {
         UUID uuid = UUID.randomUUID();
 
@@ -162,4 +162,41 @@ class AuthorControllerTest {
         return new Author(uuid, NAME_VALUE, Collections.emptySet());
     }
 
+    @Test
+    @TestSecurity(user = "testForbidden", roles = Role.AUTHOR)
+    void createAuthorForbidden() {
+        UUID uuid = UUID.randomUUID();
+        when(authorService.createAuthor(any())).thenReturn(anAuthor(uuid));
+
+        String json = new JSONObject().put(NAME_FIELD, NAME_VALUE).toString();
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(json)
+                .when()
+                .post(AUTHOR_ENDPOINT)
+                .then()
+                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
+
+        verify(authorService, never()).createAuthor(any());
+        verify(authorController).createAuthor(any());
+    }
+
+    @Test
+    @TestSecurity(user = "testForbidden", roles = Role.AUTHOR)
+    void deleteAuthorForbidden() {
+        UUID uuid = UUID.randomUUID();
+
+        RestAssured
+                .given()
+                .pathParam("id", uuid)
+                .when()
+                .delete(AUTHOR_ENDPOINT + "/{id}")
+                .then()
+                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
+
+
+        verify(authorService, never()).deleteAuthor(uuid);
+        verify(authorController).deleteAuthor(uuid);
+    }
 }

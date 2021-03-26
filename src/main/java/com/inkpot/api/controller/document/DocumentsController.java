@@ -1,5 +1,6 @@
 package com.inkpot.api.controller.document;
 
+import com.inkpot.api.iam.Role;
 import com.inkpot.core.application.CoreContext;
 import com.inkpot.core.application.port.service.Document;
 import com.inkpot.core.application.port.service.DocumentCreateData;
@@ -29,7 +30,7 @@ public class DocumentsController {
     }
 
     @POST
-    @RolesAllowed("author")
+    @RolesAllowed(Role.AUTHOR)
     public Response createDocument(DocumentCreateRequest request) {
         Document document = context.documentService().createDocument(toDocumentCreateData(request));
         return Response.ok(document).build();
@@ -49,7 +50,7 @@ public class DocumentsController {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed("author")
+    @RolesAllowed(Role.AUTHOR)
     public Response deleteDocument(@PathParam("id") UUID uuid) {
         context.documentService().deleteDocument(uuid);
         return Response.ok().build();

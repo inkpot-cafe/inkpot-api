@@ -1,5 +1,6 @@
 package com.inkpot.api.controller.document;
 
+import com.inkpot.api.iam.Role;
 import com.inkpot.core.application.CoreContext;
 import com.inkpot.core.application.port.service.Document;
 import com.inkpot.core.application.port.service.DocumentService;
@@ -51,7 +52,7 @@ class DocumentsControllerTest {
     }
 
     @Test
-    @TestSecurity(user = "testAuthor", roles = "author")
+    @TestSecurity(user = "testAuthor", roles = Role.AUTHOR)
     void createDocument() {
         UUID id = UUID.randomUUID();
         when(documentService.createDocument(any())).thenReturn(aDocument(id));
@@ -150,7 +151,7 @@ class DocumentsControllerTest {
     }
 
     @Test
-    @TestSecurity(user = "testAuthor", roles = "author")
+    @TestSecurity(user = "testAuthor", roles = Role.AUTHOR)
     void deleteDocument() {
         UUID id = UUID.randomUUID();
         when(documentService.findDocument(id)).thenReturn(Optional.of(aDocument(id)));
@@ -170,6 +171,49 @@ class DocumentsControllerTest {
 
     private Document aDocument(UUID id) {
         return new Document(id, AUTHOR_ID_VALUE, TITLE_VALUE, CONTENT_VALUE);
+    }
+
+    @Test
+    @TestSecurity(user = "testForbidden", roles = Role.ADMIN)
+    void createDocumentForbidden() {
+        UUID id = UUID.randomUUID();
+        when(documentService.createDocument(any())).thenReturn(aDocument(id));
+
+        String json = new JSONObject()
+                .put(AUTHOR_ID, AUTHOR_ID_VALUE)
+                .put(TITLE, TITLE_VALUE)
+                .put(CONTENT, CONTENT_VALUE).toString();
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(json)
+                .when()
+                .post(DOCUMENTS_ENDPOINT)
+                .then()
+                .assertThat()
+                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
+
+        verify(documentService, never()).createDocument(any());
+        verify(documentsController).createDocument(any());
+    }
+
+    @Test
+    @TestSecurity(user = "testForbidden", roles = Role.ADMIN)
+    void deleteDocumentForbidden() {
+        UUID id = UUID.randomUUID();
+        when(documentService.findDocument(id)).thenReturn(Optional.of(aDocument(id)));
+
+        RestAssured
+                .given()
+                .pathParam("id", id)
+                .when()
+                .delete(DOCUMENTS_ENDPOINT + "/{id}")
+                .then()
+                .assertThat()
+                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
+
+        verify(documentService, never()).deleteDocument(id);
+        verify(documentsController).deleteDocument(eq(id));
     }
 
 }

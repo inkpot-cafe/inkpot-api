@@ -1,5 +1,6 @@
 package com.inkpot.api.controller.author;
 
+import com.inkpot.api.iam.Role;
 import com.inkpot.core.application.CoreContext;
 import com.inkpot.core.application.port.service.Author;
 import com.inkpot.core.application.port.service.AuthorCreateData;
@@ -29,7 +30,7 @@ public class AuthorController {
     }
 
     @POST
-    @RolesAllowed("admin")
+    @RolesAllowed(Role.ADMIN)
     public Response createAuthor(AuthorCreateRequest request) {
         Author author = coreContext.authorService().createAuthor(new AuthorCreateData(request.getName()));
         return Response.ok(author).build();
@@ -49,7 +50,7 @@ public class AuthorController {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed("admin")
+    @RolesAllowed(Role.ADMIN)
     public Response deleteAuthor(@PathParam("id") UUID id) {
         coreContext.authorService().deleteAuthor(id);
         return Response.ok().build();

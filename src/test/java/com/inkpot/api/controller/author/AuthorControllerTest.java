@@ -118,6 +118,7 @@ class AuthorControllerTest {
     }
 
     @Test
+    @TestSecurity(user = "testAdmin", roles = Role.ADMIN)
     void findAllAuthors() {
         UUID uuid = UUID.randomUUID();
         when(authorService.findAllAuthors()).thenReturn(Set.of(anAuthor(uuid)));

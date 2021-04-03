@@ -45,7 +45,7 @@ class TokenIdentityProviderTest {
 
         var uni = tokenIdentityProvider.authenticate(request(TOKEN.asString()), context);
 
-        var securityIdentity = UniUtils.readSecurityIdentity(uni);
+        var securityIdentity = UniUtils.readItem(uni);
 
         UserTest.assertSecurityIdentity(securityIdentity);
     }

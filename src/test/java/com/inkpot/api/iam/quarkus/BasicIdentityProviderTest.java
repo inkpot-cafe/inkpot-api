@@ -49,7 +49,7 @@ class BasicIdentityProviderTest {
 
         var uni = basicIdentityProvider.authenticate(request(PASSWORD), context);
 
-        var securityIdentity = UniUtils.readSecurityIdentity(uni);
+        var securityIdentity = UniUtils.readItem(uni);
 
         UserTest.assertSecurityIdentity(securityIdentity);
     }

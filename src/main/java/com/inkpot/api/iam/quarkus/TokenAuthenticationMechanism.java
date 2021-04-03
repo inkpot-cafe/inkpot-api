@@ -46,10 +46,14 @@ public class TokenAuthenticationMechanism implements HttpAuthenticationMechanism
 
     @Override
     public Uni<ChallengeData> getChallenge(RoutingContext context) {
-        return Uni.createFrom().item(new ChallengeData(
+        return Uni.createFrom().item(newChallengeData());
+    }
+
+    private ChallengeData newChallengeData() {
+        return new ChallengeData(
                 HttpResponseStatus.UNAUTHORIZED.code(),
                 HttpHeaderNames.WWW_AUTHENTICATE,
-                 BEARER));
+                BEARER);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.inkpot.api.controller.document;
 
-import com.inkpot.api.iam.Role;
 import com.inkpot.core.application.CoreContext;
 import com.inkpot.core.application.port.service.Document;
 import com.inkpot.core.application.port.service.DocumentService;
@@ -52,7 +51,7 @@ class DocumentsControllerTest {
     }
 
     @Test
-    @TestSecurity(user = "testAuthor", roles = Role.AUTHOR)
+    @TestSecurity(user = "test")
     void createDocument() {
         UUID id = UUID.randomUUID();
         when(documentService.createDocument(any())).thenReturn(aDocument(id));
@@ -151,7 +150,7 @@ class DocumentsControllerTest {
     }
 
     @Test
-    @TestSecurity(user = "testAuthor", roles = Role.AUTHOR)
+    @TestSecurity(user = "test")
     void deleteDocument() {
         UUID id = UUID.randomUUID();
         when(documentService.findDocument(id)).thenReturn(Optional.of(aDocument(id)));
@@ -174,8 +173,7 @@ class DocumentsControllerTest {
     }
 
     @Test
-    @TestSecurity(user = "testForbidden", roles = Role.ADMIN)
-    void createDocumentForbidden() {
+    void createDocumentUnauthorized() {
         UUID id = UUID.randomUUID();
         when(documentService.createDocument(any())).thenReturn(aDocument(id));
 
@@ -191,15 +189,13 @@ class DocumentsControllerTest {
                 .post(DOCUMENTS_ENDPOINT)
                 .then()
                 .assertThat()
-                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
+                .statusCode(Response.Status.UNAUTHORIZED.getStatusCode());
 
         verify(documentService, never()).createDocument(any());
-        verify(documentsController).createDocument(any());
     }
 
     @Test
-    @TestSecurity(user = "testForbidden", roles = Role.ADMIN)
-    void deleteDocumentForbidden() {
+    void deleteDocumentUnauthorized() {
         UUID id = UUID.randomUUID();
         when(documentService.findDocument(id)).thenReturn(Optional.of(aDocument(id)));
 
@@ -210,10 +206,9 @@ class DocumentsControllerTest {
                 .delete(DOCUMENTS_ENDPOINT + "/{id}")
                 .then()
                 .assertThat()
-                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
+                .statusCode(Response.Status.UNAUTHORIZED.getStatusCode());
 
         verify(documentService, never()).deleteDocument(id);
-        verify(documentsController).deleteDocument(eq(id));
     }
 
 }

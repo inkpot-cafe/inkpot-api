@@ -19,7 +19,7 @@ class UserTest {
 
     @Test
     void builder() {
-        var user = user();
+        var user = buildUser();
 
         assertThat(user.getAuthorId()).isEqualTo(AUTHOR_ID);
         assertThat(user.getUsername()).isEqualTo(USERNAME);
@@ -27,15 +27,35 @@ class UserTest {
     }
 
     @Test
-    void toSecurityIdentity() {
-        var user = user();
+    void newSecurityIdentity() {
+        var user = buildUser();
 
-        var securityIdentity = user.toSecurityIdentity();
+        var securityIdentity = user.newSecurityIdentity();
 
         assertSecurityIdentity(securityIdentity);
     }
 
-    public static User user() {
+    @Test
+    void generateToken() {
+        var user = buildUser();
+
+        var token = user.generateToken();
+
+        assertThat(token).isNotNull();
+        assertThat(token.getSubject()).isEqualTo(USERNAME);
+    }
+
+    @Test
+    void usernameFromToken() {
+        var user = buildUser();
+
+        var token = user.generateToken();
+
+        var username = User.recoverUsername(token);
+        assertThat(username).isEqualTo(USERNAME);
+    }
+
+    public static User buildUser() {
         return User.builder()
                 .authorId(UserTest.AUTHOR_ID)
                 .username(UserTest.USERNAME)
@@ -46,9 +66,9 @@ class UserTest {
     public static void assertSecurityIdentity(io.quarkus.security.identity.SecurityIdentity securityIdentity) {
         assertThat(securityIdentity.getPrincipal().getName()).isEqualTo(AUTHOR_ID.toString());
         assertThat(securityIdentity.getCredential(PasswordCredential.class).getPassword()).isEqualTo(ENCRYPTED_PASSWORD.toCharArray());
-        assertThat(securityIdentity.<UUID>getAttribute(User.AUTHOR_ID)).isEqualTo(AUTHOR_ID);
-        assertThat(securityIdentity.<String>getAttribute(User.USERNAME)).isEqualTo(USERNAME);
-        assertThat(securityIdentity.<String>getAttribute(User.ENCRYPTED_PASSWORD)).isEqualTo(ENCRYPTED_PASSWORD);
+        assertThat(securityIdentity.<UUID>getAttribute(User.Field.AUTHOR_ID)).isEqualTo(AUTHOR_ID);
+        assertThat(securityIdentity.<String>getAttribute(User.Field.USERNAME)).isEqualTo(USERNAME);
+        assertThat(securityIdentity.<String>getAttribute(User.Field.ENCRYPTED_PASSWORD)).isEqualTo(ENCRYPTED_PASSWORD);
     }
 
 }

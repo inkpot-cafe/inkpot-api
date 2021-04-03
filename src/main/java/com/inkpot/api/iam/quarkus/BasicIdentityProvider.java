@@ -1,6 +1,5 @@
 package com.inkpot.api.iam.quarkus;
 
-import com.inkpot.api.iam.Role;
 import io.quarkus.security.credential.Credential;
 import io.quarkus.security.identity.AuthenticationRequestContext;
 import io.quarkus.security.identity.IdentityProvider;
@@ -23,11 +22,10 @@ public class BasicIdentityProvider implements IdentityProvider<UsernamePasswordA
         return UsernamePasswordAuthenticationRequest.class;
     }
 
-
     private final SecurityIdentity securityIdentity = new SecurityIdentity() {
         @Override
         public Principal getPrincipal() {
-            return () -> "";
+            return () -> "basic";
         }
 
         @Override
@@ -37,7 +35,7 @@ public class BasicIdentityProvider implements IdentityProvider<UsernamePasswordA
 
         @Override
         public Set<String> getRoles() {
-            return Set.of(Role.AUTHOR);
+            return Collections.emptySet();
         }
 
         @Override

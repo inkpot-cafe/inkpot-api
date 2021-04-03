@@ -1,6 +1,5 @@
 package com.inkpot.api.controller.author;
 
-import com.inkpot.api.iam.Role;
 import com.inkpot.core.application.CoreContext;
 import com.inkpot.core.application.port.service.Author;
 import com.inkpot.core.application.port.service.AuthorService;
@@ -52,7 +51,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    @TestSecurity(user = "testAdmin", roles = Role.ADMIN)
+    @TestSecurity(user = "test")
     void createAuthor() {
         UUID uuid = UUID.randomUUID();
         when(authorService.createAuthor(any())).thenReturn(anAuthor(uuid));
@@ -118,7 +117,6 @@ class AuthorControllerTest {
     }
 
     @Test
-    @TestSecurity(user = "testAdmin", roles = Role.ADMIN)
     void findAllAuthors() {
         UUID uuid = UUID.randomUUID();
         when(authorService.findAllAuthors()).thenReturn(Set.of(anAuthor(uuid)));
@@ -142,7 +140,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    @TestSecurity(user = "testAdmin", roles = Role.ADMIN)
+    @TestSecurity(user = "test")
     void deleteAuthor() {
         UUID uuid = UUID.randomUUID();
 
@@ -164,8 +162,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    @TestSecurity(user = "testForbidden", roles = Role.AUTHOR)
-    void createAuthorForbidden() {
+    void createAuthorUnauthorized() {
         UUID uuid = UUID.randomUUID();
         when(authorService.createAuthor(any())).thenReturn(anAuthor(uuid));
 
@@ -177,15 +174,13 @@ class AuthorControllerTest {
                 .when()
                 .post(AUTHOR_ENDPOINT)
                 .then()
-                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
+                .statusCode(Response.Status.UNAUTHORIZED.getStatusCode());
 
         verify(authorService, never()).createAuthor(any());
-        verify(authorController).createAuthor(any());
     }
 
     @Test
-    @TestSecurity(user = "testForbidden", roles = Role.AUTHOR)
-    void deleteAuthorForbidden() {
+    void deleteAuthorUnauthorized() {
         UUID uuid = UUID.randomUUID();
 
         RestAssured
@@ -194,10 +189,9 @@ class AuthorControllerTest {
                 .when()
                 .delete(AUTHOR_ENDPOINT + "/{id}")
                 .then()
-                .statusCode(Response.Status.FORBIDDEN.getStatusCode());
+                .statusCode(Response.Status.UNAUTHORIZED.getStatusCode());
 
 
         verify(authorService, never()).deleteAuthor(uuid);
-        verify(authorController).deleteAuthor(uuid);
     }
 }

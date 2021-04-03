@@ -17,6 +17,14 @@ public class EncryptionUtil {
         return encrypt(str, md);
     }
 
+    public static String sha512() {
+        return sha512(readEncryptionPassword());
+    }
+
+    public static String readEncryptionPassword() {
+        return ConfigProvider.getConfig().getValue(ENCRYPTION_PASSWORD, String.class);
+    }
+
     private static MessageDigest messageDigest() {
         try {
             return MessageDigest.getInstance(SHA_512);
@@ -26,8 +34,7 @@ public class EncryptionUtil {
     }
 
     private static void addSalt(MessageDigest md) {
-        var encryptionPassword = ConfigProvider.getConfig().getValue(ENCRYPTION_PASSWORD, String.class);
-        md.update(encryptionPassword.getBytes(StandardCharsets.UTF_8));
+        md.update(readEncryptionPassword().getBytes(StandardCharsets.UTF_8));
     }
 
     private static String encrypt(String str, MessageDigest md) {

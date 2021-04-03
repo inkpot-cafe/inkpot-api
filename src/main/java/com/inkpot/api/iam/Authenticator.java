@@ -1,11 +1,11 @@
 package com.inkpot.api.iam;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import static com.inkpot.api.iam.EncryptionUtil.sha512;
 
-@Singleton
+@ApplicationScoped
 public class Authenticator {
 
     private final AuthStore authStore;
@@ -25,4 +25,17 @@ public class Authenticator {
         throw new AuthenticationException("Bad password");
     }
 
+    public User authenticate(String stringToken) throws AuthenticationException {
+        validateToken(stringToken);
+
+        var token = Token.fromStringToken(stringToken);
+
+        return authStore.readUser(User.recoverUsername(token));
+    }
+
+    private void validateToken(String token) throws AuthenticationException {
+        if (!Token.isValidStringToken(token)) {
+            throw new AuthenticationException("Invalid token");
+        }
+    }
 }

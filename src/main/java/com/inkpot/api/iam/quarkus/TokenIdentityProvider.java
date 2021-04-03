@@ -1,6 +1,5 @@
 package com.inkpot.api.iam.quarkus;
 
-import com.inkpot.api.iam.Role;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -41,7 +40,7 @@ public class TokenIdentityProvider implements IdentityProvider<TokenAuthenticati
 
         @Override
         public Set<String> getRoles() {
-            return Set.of(Role.AUTHOR);
+            return Collections.emptySet();
         }
 
         @Override

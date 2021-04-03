@@ -17,14 +17,14 @@ public class Authenticator {
         this.authStore = authStore;
     }
 
-    public SecurityIdentity authenticate(String username, String password) throws InvalidPasswordException {
+    public SecurityIdentity authenticate(String username, String password) throws AuthenticationException {
         var user = authStore.readUser(username);
 
         if (user.getEncryptedPassword().equals(sha512(password))) {
             return user.toSecurityIdentity();
         }
 
-        throw new InvalidPasswordException();
+        throw new AuthenticationException("Bad password");
     }
 
 }

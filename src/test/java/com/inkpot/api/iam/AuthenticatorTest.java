@@ -23,7 +23,7 @@ class AuthenticatorTest {
     AuthStore authStore;
 
     @Test
-    void authenticateUsernamePassword() throws InvalidPasswordException {
+    void authenticateUsernamePassword() throws AuthenticationException {
         when(authStore.readUser(UserTest.USERNAME)).thenReturn(USER);
 
         var securityIdentity = authenticator.authenticate(UserTest.USERNAME, UserTest.PASSWORD);
@@ -36,7 +36,7 @@ class AuthenticatorTest {
     void authenticateUsernamePasswordInvalid() {
         when(authStore.readUser(UserTest.USERNAME)).thenReturn(USER);
 
-        Assertions.assertThatExceptionOfType(InvalidPasswordException.class)
+        Assertions.assertThatExceptionOfType(AuthenticationException.class)
                 .isThrownBy(() -> authenticator.authenticate(UserTest.USERNAME, WRONG_PASSWORD));
 
         verify(authStore).readUser(UserTest.USERNAME);

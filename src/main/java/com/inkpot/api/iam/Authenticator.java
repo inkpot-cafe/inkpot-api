@@ -16,7 +16,7 @@ public class Authenticator {
     }
 
     public User authenticate(String username, String password) throws AuthenticationException {
-        var user = userDao.readUser(username);
+        var user = userDao.readUser(username).orElseThrow(this::noUserFoundException);
 
         if (user.getEncryptedPassword().equals(sha512(password))) {
             return user;
@@ -30,7 +30,11 @@ public class Authenticator {
 
         var token = Token.fromStringToken(stringToken);
 
-        return userDao.readUser(User.recoverUsername(token));
+        return userDao.readUser(User.recoverUsername(token)).orElseThrow(this::noUserFoundException);
+    }
+
+    private AuthenticationException noUserFoundException() {
+        return new AuthenticationException("No user found");
     }
 
     private void validateToken(String token) throws AuthenticationException {

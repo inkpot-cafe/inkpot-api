@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.verify;
@@ -28,7 +30,7 @@ class AuthenticatorTest {
 
     @BeforeEach
     void setUp() {
-        when(userDao.readUser(UserTest.USERNAME)).thenReturn(USER);
+        when(userDao.readUser(UserTest.USERNAME)).thenReturn(Optional.of(USER));
     }
 
     @Test

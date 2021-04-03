@@ -1,5 +1,6 @@
-package com.inkpot.api.iam;
+package com.inkpot.api.iam.quarkus;
 
+import com.inkpot.api.iam.Role;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -11,15 +12,14 @@ import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.request.TokenAuthenticationRequest;
 import io.smallrye.mutiny.Uni;
 
-import javax.crypto.SecretKey;
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-@Singleton
+@ApplicationScoped
 public class TokenIdentityProvider implements IdentityProvider<TokenAuthenticationRequest> {
 
     @Override

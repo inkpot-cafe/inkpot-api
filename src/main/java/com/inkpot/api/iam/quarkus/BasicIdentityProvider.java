@@ -1,5 +1,6 @@
-package com.inkpot.api.iam;
+package com.inkpot.api.iam.quarkus;
 
+import com.inkpot.api.iam.Role;
 import io.quarkus.security.credential.Credential;
 import io.quarkus.security.identity.AuthenticationRequestContext;
 import io.quarkus.security.identity.IdentityProvider;
@@ -7,14 +8,14 @@ import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest;
 import io.smallrye.mutiny.Uni;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-@Singleton
+@ApplicationScoped
 public class BasicIdentityProvider implements IdentityProvider<UsernamePasswordAuthenticationRequest> {
 
     @Override

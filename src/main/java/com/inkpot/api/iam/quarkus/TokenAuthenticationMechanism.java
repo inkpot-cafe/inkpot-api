@@ -1,4 +1,4 @@
-package com.inkpot.api.iam;
+package com.inkpot.api.iam.quarkus;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -13,13 +13,13 @@ import io.quarkus.vertx.http.runtime.security.HttpCredentialTransport;
 import io.smallrye.mutiny.Uni;
 import io.vertx.ext.web.RoutingContext;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
-@Singleton
+@ApplicationScoped
 public class TokenAuthenticationMechanism implements HttpAuthenticationMechanism {
 
     private static final String BEARER = "bearer";

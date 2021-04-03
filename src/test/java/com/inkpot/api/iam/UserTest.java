@@ -10,7 +10,7 @@ import static com.inkpot.api.iam.EncryptionUtil.sha512;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTest
-class UserTest {
+public class UserTest {
 
     public static final UUID AUTHOR_ID = UUID.randomUUID();
     public static final String PASSWORD = "password";

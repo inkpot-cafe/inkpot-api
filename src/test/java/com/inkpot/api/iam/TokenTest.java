@@ -46,7 +46,7 @@ class TokenTest {
 
     @Test
     void fromStringToken() {
-         var originalToken = buildToken();
+        var originalToken = buildToken();
         var tokenStr = originalToken.asString();
 
         var tokenFromStr = Token.fromStringToken(tokenStr);

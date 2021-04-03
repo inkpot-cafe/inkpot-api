@@ -1,5 +1,5 @@
 package com.inkpot.api.iam;
 
-public interface AuthStore {
+public interface UserStore {
     User readUser(String username);
 }

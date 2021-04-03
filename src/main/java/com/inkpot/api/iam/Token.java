@@ -91,7 +91,7 @@ public final class Token {
     }
 
     private static SecretKey readSecretKey() {
-        return Keys.hmacShaKeyFor(EncryptionUtil.sha512().getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(EncryptionUtil.sha512Key().getBytes(StandardCharsets.UTF_8));
     }
 
 }

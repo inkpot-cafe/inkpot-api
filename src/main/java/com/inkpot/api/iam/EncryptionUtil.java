@@ -17,7 +17,7 @@ public class EncryptionUtil {
         return encrypt(str, md);
     }
 
-    public static String sha512() {
+    public static String sha512Key() {
         return sha512(readEncryptionPassword());
     }
 

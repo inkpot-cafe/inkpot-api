@@ -25,7 +25,7 @@ class TokenTest {
 
     private JwtParser newJwtParser() {
         return Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(EncryptionUtil.sha512().getBytes(StandardCharsets.UTF_8)))
+                .setSigningKey(Keys.hmacShaKeyFor(EncryptionUtil.sha512Key().getBytes(StandardCharsets.UTF_8)))
                 .build();
     }
 

@@ -30,7 +30,7 @@ public class UserTest {
     void newSecurityIdentity() {
         var user = buildUser();
 
-        var securityIdentity = user.newSecurityIdentity();
+        var securityIdentity = user.toSecurityIdentity();
 
         assertSecurityIdentity(securityIdentity);
     }

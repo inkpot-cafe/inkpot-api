@@ -7,11 +7,9 @@ import com.inkpot.api.iam.UserTest;
 import io.quarkus.security.AuthenticationFailedException;
 import io.quarkus.security.credential.PasswordCredential;
 import io.quarkus.security.identity.AuthenticationRequestContext;
-import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
-import io.smallrye.mutiny.Uni;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
@@ -36,7 +34,7 @@ class BasicIdentityProviderTest {
     Authenticator authenticator;
 
     @Mock
-    AuthenticationRequestContext authenticationRequestContext;
+    AuthenticationRequestContext context;
 
     @Test
     void testRequestType() {
@@ -49,9 +47,9 @@ class BasicIdentityProviderTest {
     void authenticate() throws AuthenticationException {
         when(authenticator.authenticate(USERNAME, PASSWORD)).thenReturn(USER);
 
-        var uni = basicIdentityProvider.authenticate(request(PASSWORD), authenticationRequestContext);
+        var uni = basicIdentityProvider.authenticate(request(PASSWORD), context);
 
-        var securityIdentity = readSecurityIdentity(uni);
+        var securityIdentity = UniUtils.readSecurityIdentity(uni);
 
         UserTest.assertSecurityIdentity(securityIdentity);
     }
@@ -61,15 +59,11 @@ class BasicIdentityProviderTest {
         when(authenticator.authenticate(USERNAME, INVALID_PASSWORD)).thenThrow(new AuthenticationException(""));
 
         assertThatExceptionOfType(AuthenticationFailedException.class)
-                .isThrownBy(() -> basicIdentityProvider.authenticate(request(INVALID_PASSWORD), authenticationRequestContext));
+                .isThrownBy(() -> basicIdentityProvider.authenticate(request(INVALID_PASSWORD), context));
     }
 
     private UsernamePasswordAuthenticationRequest request(String invalidPassword) {
         return new UsernamePasswordAuthenticationRequest(USERNAME, new PasswordCredential(invalidPassword.toCharArray()));
-    }
-
-    private SecurityIdentity readSecurityIdentity(Uni<SecurityIdentity> securityIdentityUni) {
-        return securityIdentityUni.subscribe().asCompletionStage().join();
     }
 
 }

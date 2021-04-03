@@ -32,7 +32,7 @@ public final class User {
         return encryptedPassword;
     }
 
-    public SecurityIdentity newSecurityIdentity() {
+    public SecurityIdentity toSecurityIdentity() {
         return QuarkusSecurityIdentity.builder()
                 .setPrincipal(new QuarkusPrincipal(authorId.toString()))
                 .addAttribute(Field.AUTHOR_ID, authorId)

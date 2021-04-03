@@ -32,7 +32,7 @@ public class BasicIdentityProvider implements IdentityProvider<UsernamePasswordA
     public Uni<SecurityIdentity> authenticate(UsernamePasswordAuthenticationRequest request, AuthenticationRequestContext context) {
         try {
             var user = authenticator.authenticate(request.getUsername(), stringify(request.getPassword()));
-            return Uni.createFrom().item(user.newSecurityIdentity());
+            return Uni.createFrom().item(user.toSecurityIdentity());
         } catch (AuthenticationException e) {
             e.printStackTrace();
             throw new AuthenticationFailedException(e);

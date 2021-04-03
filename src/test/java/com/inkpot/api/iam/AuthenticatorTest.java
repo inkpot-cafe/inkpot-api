@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
-import static com.inkpot.api.iam.UserTest.assertSecurityIdentity;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 

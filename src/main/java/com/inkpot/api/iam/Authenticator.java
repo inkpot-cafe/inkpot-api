@@ -1,7 +1,5 @@
 package com.inkpot.api.iam;
 
-import io.quarkus.security.identity.SecurityIdentity;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -17,11 +15,11 @@ public class Authenticator {
         this.authStore = authStore;
     }
 
-    public SecurityIdentity authenticate(String username, String password) throws AuthenticationException {
+    public User authenticate(String username, String password) throws AuthenticationException {
         var user = authStore.readUser(username);
 
         if (user.getEncryptedPassword().equals(sha512(password))) {
-            return user.toSecurityIdentity();
+            return user;
         }
 
         throw new AuthenticationException("Bad password");

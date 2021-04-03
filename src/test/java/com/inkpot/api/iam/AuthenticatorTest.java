@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,10 +27,10 @@ class AuthenticatorTest {
     void authenticateUsernamePassword() throws AuthenticationException {
         when(authStore.readUser(UserTest.USERNAME)).thenReturn(USER);
 
-        var securityIdentity = authenticator.authenticate(UserTest.USERNAME, UserTest.PASSWORD);
+        var user = authenticator.authenticate(UserTest.USERNAME, UserTest.PASSWORD);
 
         verify(authStore).readUser(UserTest.USERNAME);
-        UserTest.assertSecurityIdentity(securityIdentity);
+        assertThat(user).isEqualTo(USER);
     }
 
     @Test

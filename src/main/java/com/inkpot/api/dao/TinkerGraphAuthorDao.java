@@ -1,7 +1,7 @@
-package com.inkpot.api.store;
+package com.inkpot.api.dao;
 
 import com.inkpot.core.application.port.store.AuthorDto;
-import com.inkpot.core.application.port.store.AuthorStore;
+import com.inkpot.core.application.port.store.AuthorDao;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApplicationScoped
-public class TinkerGraphAuthorStore implements AuthorStore {
+public class TinkerGraphAuthorDao implements AuthorDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TinkerGraphAuthorStore.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TinkerGraphAuthorDao.class);
     public static final String AUTHOR = "author";
     public static final String NAME = "name";
     public static final String WRITES = "writes";
@@ -31,7 +31,7 @@ public class TinkerGraphAuthorStore implements AuthorStore {
     private final GraphTraversalSource g;
 
     @Inject
-    public TinkerGraphAuthorStore(GraphTraversalSource g) {
+    public TinkerGraphAuthorDao(GraphTraversalSource g) {
         this.g = g;
     }
 

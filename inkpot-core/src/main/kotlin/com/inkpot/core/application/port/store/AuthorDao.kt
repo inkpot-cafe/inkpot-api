@@ -6,7 +6,7 @@ import com.inkpot.core.domain.author.AuthorAggregate
 import com.inkpot.core.domain.author.AuthorRepository
 import java.util.*
 
-interface AuthorStore {
+interface AuthorDao {
     fun save(authorDto: AuthorDto)
     fun find(uuid: UUID): Optional<AuthorDto>
     fun findAll(): Set<AuthorDto>
@@ -15,19 +15,19 @@ interface AuthorStore {
 
 data class AuthorDto(val id: UUID, val name: String, val documentIds: Set<UUID>)
 
-internal class InternalAuthorRepository(domainContext: DomainContext, private val authorStore: AuthorStore) :
+internal class InternalAuthorRepository(domainContext: DomainContext, private val authorDao: AuthorDao) :
     DomainClass(domainContext), AuthorRepository {
 
-    override fun save(authorAggregate: AuthorAggregate) = authorStore.save(toAuthorDto(authorAggregate))
+    override fun save(authorAggregate: AuthorAggregate) = authorDao.save(toAuthorDto(authorAggregate))
 
-    override fun find(id: UUID) = authorStore.find(id).orElse(null)?.let { toAuthorAggregate(it) }
+    override fun find(id: UUID) = authorDao.find(id).orElse(null)?.let { toAuthorAggregate(it) }
 
-    override fun findAll() = authorStore.findAll().map { toAuthorAggregate(it) }.toSet()
+    override fun findAll() = authorDao.findAll().map { toAuthorAggregate(it) }.toSet()
 
     override fun delete(id: UUID) =
         id.also {
-            authorStore.find(it).ifPresent(this::deleteItsDocuments)
-        }.let { authorStore.delete(it) }
+            authorDao.find(it).ifPresent(this::deleteItsDocuments)
+        }.let { authorDao.delete(it) }
 
     private fun deleteItsDocuments(author: AuthorDto) =
         author.documentIds.forEach { domainContext.documentRepository().delete(it) }

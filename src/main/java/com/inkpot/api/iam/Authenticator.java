@@ -8,15 +8,15 @@ import static com.inkpot.api.iam.EncryptionUtil.sha512;
 @ApplicationScoped
 public class Authenticator {
 
-    private final UserStore userStore;
+    private final UserDao userDao;
 
     @Inject
-    public Authenticator(UserStore userStore) {
-        this.userStore = userStore;
+    public Authenticator(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public User authenticate(String username, String password) throws AuthenticationException {
-        var user = userStore.readUser(username);
+        var user = userDao.readUser(username);
 
         if (user.getEncryptedPassword().equals(sha512(password))) {
             return user;
@@ -30,7 +30,7 @@ public class Authenticator {
 
         var token = Token.fromStringToken(stringToken);
 
-        return userStore.readUser(User.recoverUsername(token));
+        return userDao.readUser(User.recoverUsername(token));
     }
 
     private void validateToken(String token) throws AuthenticationException {

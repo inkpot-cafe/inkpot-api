@@ -6,7 +6,7 @@ import com.inkpot.core.domain.document.DocumentAggregate
 import com.inkpot.core.domain.document.DocumentRepository
 import java.util.*
 
-interface DocumentStore {
+interface DocumentDao {
     fun save(document: DocumentDto)
     fun find(uuid: UUID): Optional<DocumentDto>
     fun findAll(): Set<DocumentDto>
@@ -20,16 +20,16 @@ data class DocumentDto(
     val content: String
 )
 
-internal class InternalDocumentRepository(domainContext: DomainContext, private val documentStore: DocumentStore) :
+internal class InternalDocumentRepository(domainContext: DomainContext, private val documentDao: DocumentDao) :
     DomainClass(domainContext), DocumentRepository {
-    override fun save(document: DocumentAggregate) = documentStore.save(toDocumentDto(document))
+    override fun save(document: DocumentAggregate) = documentDao.save(toDocumentDto(document))
 
     override fun find(id: UUID): DocumentAggregate? =
-        documentStore.find(id).orElse(null)?.let { toDocumentAggregate(it) }
+        documentDao.find(id).orElse(null)?.let { toDocumentAggregate(it) }
 
-    override fun findAll(): Set<DocumentAggregate> = documentStore.findAll().map { toDocumentAggregate(it) }.toSet()
+    override fun findAll(): Set<DocumentAggregate> = documentDao.findAll().map { toDocumentAggregate(it) }.toSet()
 
-    override fun delete(id: UUID) = documentStore.delete(id)
+    override fun delete(id: UUID) = documentDao.delete(id)
 
     private fun toDocumentDto(document: DocumentAggregate) =
         DocumentDto(

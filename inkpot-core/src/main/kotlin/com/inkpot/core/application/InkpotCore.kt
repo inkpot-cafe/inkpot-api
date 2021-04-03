@@ -1,12 +1,12 @@
 package com.inkpot.core.application
 
-import com.inkpot.core.application.port.store.AuthorStore
-import com.inkpot.core.application.port.store.DocumentStore
+import com.inkpot.core.application.port.store.AuthorDao
+import com.inkpot.core.application.port.store.DocumentDao
 
 object InkpotCore {
 
     @JvmStatic
-    fun createContext(authorStore: AuthorStore, documentStore: DocumentStore): CoreContext =
-        InternalCoreContext(authorStore, documentStore)
+    fun createContext(authorDao: AuthorDao, documentDao: DocumentDao): CoreContext =
+        InternalCoreContext(authorDao, documentDao)
 
 }

@@ -1,4 +1,4 @@
-package com.inkpot.api.store;
+package com.inkpot.api.dao;
 
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.annotations.RegisterForReflection;

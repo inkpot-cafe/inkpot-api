@@ -24,18 +24,18 @@ class AuthenticatorTest {
     Authenticator authenticator;
 
     @InjectMock
-    UserStore userStore;
+    UserDao userDao;
 
     @BeforeEach
     void setUp() {
-        when(userStore.readUser(UserTest.USERNAME)).thenReturn(USER);
+        when(userDao.readUser(UserTest.USERNAME)).thenReturn(USER);
     }
 
     @Test
     void authenticateUsernamePassword() throws AuthenticationException {
         var user = authenticator.authenticate(UserTest.USERNAME, UserTest.PASSWORD);
 
-        verify(userStore).readUser(UserTest.USERNAME);
+        verify(userDao).readUser(UserTest.USERNAME);
         assertThat(user).isEqualTo(USER);
     }
 
@@ -44,7 +44,7 @@ class AuthenticatorTest {
         assertThatExceptionOfType(AuthenticationException.class)
                 .isThrownBy(() -> authenticator.authenticate(UserTest.USERNAME, WRONG_PASSWORD));
 
-        verify(userStore).readUser(UserTest.USERNAME);
+        verify(userDao).readUser(UserTest.USERNAME);
     }
 
     @Test

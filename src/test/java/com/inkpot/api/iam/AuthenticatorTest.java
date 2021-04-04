@@ -1,5 +1,6 @@
 package com.inkpot.api.iam;
 
+import io.quarkus.security.identity.CurrentIdentityAssociation;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,8 @@ class AuthenticatorTest {
 
     @InjectMock
     UserDao userDao;
+    @InjectMock
+    CurrentIdentityAssociation currentIdentityAssociation;
 
     @BeforeEach
     void setUp() {
@@ -60,6 +63,16 @@ class AuthenticatorTest {
     void authenticateTokenInvalid() {
         assertThatExceptionOfType(AuthenticationException.class)
                 .isThrownBy(() -> authenticator.authenticate(INVALID_TOKEN));
+
+    }
+
+    @Test
+    void currentAuthenticatedUser() {
+        when(currentIdentityAssociation.getIdentity()).thenReturn(USER.toSecurityIdentity());
+
+        var actual = authenticator.currentAuthenticatedUser();
+
+        assertThat(actual).isEqualTo(USER);
     }
 
 }

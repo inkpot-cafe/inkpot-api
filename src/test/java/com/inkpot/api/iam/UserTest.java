@@ -51,7 +51,7 @@ public class UserTest {
 
         var token = user.generateToken();
 
-        var username = User.recoverUsername(token);
+        var username = User.readUsernameFrom(token);
         assertThat(username).isEqualTo(USERNAME);
     }
 
@@ -64,11 +64,11 @@ public class UserTest {
     }
 
     public static void assertSecurityIdentity(io.quarkus.security.identity.SecurityIdentity securityIdentity) {
-        assertThat(securityIdentity.getPrincipal().getName()).isEqualTo(AUTHOR_ID.toString());
+        assertThat(securityIdentity.getPrincipal().getName()).isEqualTo(USERNAME);
         assertThat(securityIdentity.getCredential(PasswordCredential.class).getPassword()).isEqualTo(ENCRYPTED_PASSWORD.toCharArray());
-        assertThat(securityIdentity.<UUID>getAttribute(User.Field.AUTHOR_ID)).isEqualTo(AUTHOR_ID);
-        assertThat(securityIdentity.<String>getAttribute(User.Field.USERNAME)).isEqualTo(USERNAME);
-        assertThat(securityIdentity.<String>getAttribute(User.Field.ENCRYPTED_PASSWORD)).isEqualTo(ENCRYPTED_PASSWORD);
+        assertThat(securityIdentity.<UUID>getAttribute(User.Attribute.AUTHOR_ID)).isEqualTo(AUTHOR_ID);
+        assertThat(securityIdentity.<String>getAttribute(User.Attribute.USERNAME)).isEqualTo(USERNAME);
+        assertThat(securityIdentity.<String>getAttribute(User.Attribute.ENCRYPTED_PASSWORD)).isEqualTo(ENCRYPTED_PASSWORD);
     }
 
 }

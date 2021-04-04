@@ -1,18 +1,24 @@
 package com.inkpot.api.iam;
 
+import io.quarkus.security.identity.CurrentIdentityAssociation;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import static com.inkpot.api.iam.EncryptionUtil.readEncryptionPassword;
 import static com.inkpot.api.iam.EncryptionUtil.sha512;
 
 @ApplicationScoped
 public class Authenticator {
 
     private final UserDao userDao;
+    private final CurrentIdentityAssociation currentIdentityAssociation;
 
     @Inject
-    public Authenticator(UserDao userDao) {
+    public Authenticator(UserDao userDao,
+                         CurrentIdentityAssociation currentIdentityAssociation) {
         this.userDao = userDao;
+        this.currentIdentityAssociation = currentIdentityAssociation;
     }
 
     public User authenticate(String username, String password) throws AuthenticationException {
@@ -30,7 +36,7 @@ public class Authenticator {
 
         var token = Token.fromStringToken(stringToken);
 
-        return userDao.readUser(User.recoverUsername(token)).orElseThrow(this::noUserFoundException);
+        return userDao.readUser(User.readUsernameFrom(token)).orElseThrow(this::noUserFoundException);
     }
 
     private AuthenticationException noUserFoundException() {
@@ -41,5 +47,11 @@ public class Authenticator {
         if (!Token.isValidStringToken(token)) {
             throw new AuthenticationException("Invalid token");
         }
+    }
+
+
+    public User currentAuthenticatedUser() {
+        var username = User.readUsernameFrom(currentIdentityAssociation.getIdentity());
+        return userDao.readUser(username).orElseThrow();
     }
 }

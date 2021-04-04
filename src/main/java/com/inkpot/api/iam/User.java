@@ -34,10 +34,10 @@ public final class User {
 
     public SecurityIdentity toSecurityIdentity() {
         return QuarkusSecurityIdentity.builder()
-                .setPrincipal(new QuarkusPrincipal(authorId.toString()))
-                .addAttribute(Field.AUTHOR_ID, authorId)
-                .addAttribute(Field.USERNAME, username)
-                .addAttribute(Field.ENCRYPTED_PASSWORD, encryptedPassword)
+                .setPrincipal(new QuarkusPrincipal(username))
+                .addAttribute(Attribute.AUTHOR_ID, authorId)
+                .addAttribute(Attribute.USERNAME, username)
+                .addAttribute(Attribute.ENCRYPTED_PASSWORD, encryptedPassword)
                 .addCredential(new PasswordCredential(encryptedPassword.toCharArray()))
                 .build();
     }
@@ -59,8 +59,12 @@ public final class User {
         return Token.builder().subject(username).build();
     }
 
-    public static String recoverUsername(Token token) {
+    public static String readUsernameFrom(Token token) {
         return token.getSubject();
+    }
+
+    public static String readUsernameFrom(SecurityIdentity securityIdentity) {
+        return securityIdentity.getPrincipal().getName();
     }
 
     public static Builder builder() {
@@ -96,7 +100,7 @@ public final class User {
 
     }
 
-    public static final class Field {
+    public static final class Attribute {
 
         public static final String USERNAME = "username";
         public static final String AUTHOR_ID = "authorId";

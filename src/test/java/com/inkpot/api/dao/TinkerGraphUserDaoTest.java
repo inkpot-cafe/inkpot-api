@@ -29,7 +29,8 @@ class TinkerGraphUserDaoTest {
 
     @Test
     void defaultUser() {
-        // an interaction with the instance is necessary to call @PostConstruct
+        // an interaction with the instance is necessary to call @PostConstruct in unit tests
+        // it's a kind of quarkus bug :/
         tinkerGraphUserDao.toString();
 
         var vertex = g.V().hasLabel(TinkerGraphUserDao.USER_LABEL).

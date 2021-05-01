@@ -1,4 +1,4 @@
-package com.inkpot.api.store;
+package com.inkpot.api.dao;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;

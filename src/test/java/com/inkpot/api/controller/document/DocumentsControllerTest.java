@@ -6,6 +6,7 @@ import com.inkpot.core.application.port.service.DocumentService;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.junit.mockito.InjectSpy;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.json.JSONArray;
@@ -50,6 +51,7 @@ class DocumentsControllerTest {
     }
 
     @Test
+    @TestSecurity(user = "test")
     void createDocument() {
         UUID id = UUID.randomUUID();
         when(documentService.createDocument(any())).thenReturn(aDocument(id));
@@ -148,6 +150,7 @@ class DocumentsControllerTest {
     }
 
     @Test
+    @TestSecurity(user = "test")
     void deleteDocument() {
         UUID id = UUID.randomUUID();
         when(documentService.findDocument(id)).thenReturn(Optional.of(aDocument(id)));
@@ -167,6 +170,45 @@ class DocumentsControllerTest {
 
     private Document aDocument(UUID id) {
         return new Document(id, AUTHOR_ID_VALUE, TITLE_VALUE, CONTENT_VALUE);
+    }
+
+    @Test
+    void createDocumentUnauthorized() {
+        UUID id = UUID.randomUUID();
+        when(documentService.createDocument(any())).thenReturn(aDocument(id));
+
+        String json = new JSONObject()
+                .put(AUTHOR_ID, AUTHOR_ID_VALUE)
+                .put(TITLE, TITLE_VALUE)
+                .put(CONTENT, CONTENT_VALUE).toString();
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(json)
+                .when()
+                .post(DOCUMENTS_ENDPOINT)
+                .then()
+                .assertThat()
+                .statusCode(Response.Status.UNAUTHORIZED.getStatusCode());
+
+        verify(documentService, never()).createDocument(any());
+    }
+
+    @Test
+    void deleteDocumentUnauthorized() {
+        UUID id = UUID.randomUUID();
+        when(documentService.findDocument(id)).thenReturn(Optional.of(aDocument(id)));
+
+        RestAssured
+                .given()
+                .pathParam("id", id)
+                .when()
+                .delete(DOCUMENTS_ENDPOINT + "/{id}")
+                .then()
+                .assertThat()
+                .statusCode(Response.Status.UNAUTHORIZED.getStatusCode());
+
+        verify(documentService, never()).deleteDocument(id);
     }
 
 }

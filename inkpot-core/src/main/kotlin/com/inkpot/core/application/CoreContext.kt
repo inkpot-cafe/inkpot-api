@@ -4,8 +4,8 @@ import com.inkpot.core.application.port.service.AuthorService
 import com.inkpot.core.application.port.service.DocumentService
 import com.inkpot.core.application.port.service.InternalAuthorService
 import com.inkpot.core.application.port.service.InternalDocumentService
-import com.inkpot.core.application.port.store.AuthorStore
-import com.inkpot.core.application.port.store.DocumentStore
+import com.inkpot.core.application.port.store.AuthorDao
+import com.inkpot.core.application.port.store.DocumentDao
 import com.inkpot.core.domain.DomainContext
 import com.inkpot.core.domain.author.AuthorAggregateFactory
 import com.inkpot.core.domain.author.AuthorRepository
@@ -19,11 +19,11 @@ interface CoreContext {
     fun authorService(): AuthorService
 }
 
-internal class InternalCoreContext(authorStore: AuthorStore, documentStore: DocumentStore) :
+internal class InternalCoreContext(authorDao: AuthorDao, documentDao: DocumentDao) :
     CoreContext, DomainContext {
 
-    private val authorRepository: AuthorRepository = InternalAuthorRepository(this, authorStore)
-    private val documentRepository: DocumentRepository = InternalDocumentRepository(this, documentStore)
+    private val authorRepository: AuthorRepository = InternalAuthorRepository(this, authorDao)
+    private val documentRepository: DocumentRepository = InternalDocumentRepository(this, documentDao)
 
     private val authorAggregateFactory = AuthorAggregateFactory(this)
     private val documentAggregateFactory = DocumentAggregateFactory(this)

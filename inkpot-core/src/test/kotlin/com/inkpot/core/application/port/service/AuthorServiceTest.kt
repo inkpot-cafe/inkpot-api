@@ -2,7 +2,7 @@ package com.inkpot.core.application.port.service
 
 import com.inkpot.core.application.InkpotCore
 import com.inkpot.core.application.port.store.AuthorDto
-import com.inkpot.core.application.port.store.AuthorStore
+import com.inkpot.core.application.port.store.AuthorDao
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -19,13 +19,13 @@ internal class AuthorServiceTest {
         private val DOCUMENT_IDS = emptySet<UUID>()
     }
 
-    private lateinit var authorStore: AuthorStore
+    private lateinit var authorDao: AuthorDao
     private lateinit var authorService: AuthorService
 
     @BeforeEach
     internal fun setUp() {
-        authorStore = mock()
-        authorService = InkpotCore.createContext(authorStore, mock()).authorService()
+        authorDao = mock()
+        authorService = InkpotCore.createContext(authorDao, mock()).authorService()
     }
 
     @Test
@@ -36,7 +36,7 @@ internal class AuthorServiceTest {
 
         val uuid: UUID
         argumentCaptor<AuthorDto>().apply {
-            verify(authorStore).save(capture())
+            verify(authorDao).save(capture())
 
             uuid = firstValue.id
             assertNotNull(uuid)
@@ -51,11 +51,11 @@ internal class AuthorServiceTest {
     @Test
     internal fun `find author`() {
         val uuid = UUID.randomUUID()
-        whenever(authorStore.find(uuid)).thenReturn(Optional.of(anAuthorDto(uuid)))
+        whenever(authorDao.find(uuid)).thenReturn(Optional.of(anAuthorDto(uuid)))
 
         val author = authorService.findAuthor(uuid)
 
-        verify(authorStore).find(uuid)
+        verify(authorDao).find(uuid)
 
         assertTrue(author.isPresent)
         assertEquals(uuid, author.get().id)
@@ -66,11 +66,11 @@ internal class AuthorServiceTest {
     @Test
     internal fun `find author not found`() {
         val uuid = UUID.randomUUID()
-        whenever(authorStore.find(uuid)).thenReturn(Optional.empty())
+        whenever(authorDao.find(uuid)).thenReturn(Optional.empty())
 
         val author = authorService.findAuthor(uuid)
 
-        verify(authorStore).find(uuid)
+        verify(authorDao).find(uuid)
 
         assertFalse(author.isPresent)
     }
@@ -78,11 +78,11 @@ internal class AuthorServiceTest {
     @Test
     internal fun `find all authors`() {
         val uuid = UUID.randomUUID()
-        whenever(authorStore.findAll()).thenReturn(setOf(anAuthorDto(uuid)))
+        whenever(authorDao.findAll()).thenReturn(setOf(anAuthorDto(uuid)))
 
         val authors = authorService.findAllAuthors()
 
-        verify(authorStore).findAll()
+        verify(authorDao).findAll()
 
         assertEquals(1, authors.size)
         assertEquals(uuid, authors.elementAt(0).id)
@@ -98,7 +98,7 @@ internal class AuthorServiceTest {
 
         authorService.deleteAuthor(uuid)
 
-        verify(authorStore).delete(uuid)
+        verify(authorDao).delete(uuid)
     }
 
 }

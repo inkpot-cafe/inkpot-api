@@ -1,4 +1,4 @@
-package com.inkpot.api.store;
+package com.inkpot.api.dao;
 
 import com.inkpot.core.application.port.store.AuthorDto;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -16,12 +16,12 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TinkerGraphAuthorStoreTest {
+class TinkerGraphAuthorDaoTest {
 
     public static final String GRAPH_LOCATION = "graph.kryo";
     public static final String NAME = "name";
     public static final Set<UUID> DOCUMENT_IDS = Collections.emptySet();
-    private TinkerGraphAuthorStore tinkerGraphAuthorStore;
+    private TinkerGraphAuthorDao tinkerGraphAuthorStore;
     private TinkerGraphProvider tinkerGraphProvider;
 
     @BeforeEach
@@ -29,7 +29,7 @@ class TinkerGraphAuthorStoreTest {
         cleanTinkerGraphData();
         tinkerGraphProvider = new TinkerGraphProvider(Optional.of(GRAPH_LOCATION));
         GraphTraversalSource g = tinkerGraphProvider.instantiateGraph();
-        tinkerGraphAuthorStore = new TinkerGraphAuthorStore(g);
+        tinkerGraphAuthorStore = new TinkerGraphAuthorDao(g);
     }
 
     @Test

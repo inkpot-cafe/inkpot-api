@@ -18,6 +18,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-jackson'
     implementation 'io.quarkus:quarkus-resteasy'
     implementation 'io.quarkus:quarkus-kotlin'
+    implementation 'io.quarkus:quarkus-security'
+
+    implementation 'io.quarkus:quarkus-smallrye-jwt-build'
 
     implementation 'org.apache.tinkerpop:tinkergraph-gremlin'
 
@@ -30,6 +33,7 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured:4.3.3'
     testImplementation 'org.json:json:20201115'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+    testImplementation 'io.quarkus:quarkus-test-security'
 }
 
 java {

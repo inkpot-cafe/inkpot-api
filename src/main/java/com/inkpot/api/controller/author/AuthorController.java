@@ -4,7 +4,9 @@ import com.inkpot.core.application.CoreContext;
 import com.inkpot.core.application.port.service.Author;
 import com.inkpot.core.application.port.service.AuthorCreateData;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import io.quarkus.security.Authenticated;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -13,7 +15,7 @@ import javax.ws.rs.core.Response;
 import java.util.Optional;
 import java.util.UUID;
 
-@Path("/authors")
+@Path("authors")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
@@ -34,7 +36,7 @@ public class AuthorController {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response findAuthor(@PathParam("id") UUID id) {
         Optional<Author> author = coreContext.authorService().findAuthor(id);
         return author.map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
@@ -46,7 +48,7 @@ public class AuthorController {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response deleteAuthor(@PathParam("id") UUID id) {
         coreContext.authorService().deleteAuthor(id);
         return Response.ok().build();

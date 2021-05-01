@@ -6,6 +6,7 @@ import com.inkpot.core.application.port.service.AuthorService;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.junit.mockito.InjectSpy;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.json.JSONArray;
@@ -23,8 +24,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @QuarkusTest
 class AuthorControllerTest {
@@ -51,6 +51,7 @@ class AuthorControllerTest {
     }
 
     @Test
+    @TestSecurity(user = "test")
     void createAuthor() {
         UUID uuid = UUID.randomUUID();
         when(authorService.createAuthor(any())).thenReturn(anAuthor(uuid));
@@ -139,6 +140,7 @@ class AuthorControllerTest {
     }
 
     @Test
+    @TestSecurity(user = "test")
     void deleteAuthor() {
         UUID uuid = UUID.randomUUID();
 
@@ -159,4 +161,37 @@ class AuthorControllerTest {
         return new Author(uuid, NAME_VALUE, Collections.emptySet());
     }
 
+    @Test
+    void createAuthorUnauthorized() {
+        UUID uuid = UUID.randomUUID();
+        when(authorService.createAuthor(any())).thenReturn(anAuthor(uuid));
+
+        String json = new JSONObject().put(NAME_FIELD, NAME_VALUE).toString();
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(json)
+                .when()
+                .post(AUTHOR_ENDPOINT)
+                .then()
+                .statusCode(Response.Status.UNAUTHORIZED.getStatusCode());
+
+        verify(authorService, never()).createAuthor(any());
+    }
+
+    @Test
+    void deleteAuthorUnauthorized() {
+        UUID uuid = UUID.randomUUID();
+
+        RestAssured
+                .given()
+                .pathParam("id", uuid)
+                .when()
+                .delete(AUTHOR_ENDPOINT + "/{id}")
+                .then()
+                .statusCode(Response.Status.UNAUTHORIZED.getStatusCode());
+
+
+        verify(authorService, never()).deleteAuthor(uuid);
+    }
 }

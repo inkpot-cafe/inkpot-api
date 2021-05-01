@@ -2,9 +2,9 @@ package com.inkpot.core.application.port.service
 
 import com.inkpot.core.application.InkpotCore
 import com.inkpot.core.application.port.store.AuthorDto
-import com.inkpot.core.application.port.store.AuthorStore
+import com.inkpot.core.application.port.store.AuthorDao
 import com.inkpot.core.application.port.store.DocumentDto
-import com.inkpot.core.application.port.store.DocumentStore
+import com.inkpot.core.application.port.store.DocumentDao
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -22,28 +22,28 @@ internal class DocumentServiceTest {
         private val DOCUMENT_IDS = emptySet<UUID>()
     }
 
-    private lateinit var authorStore: AuthorStore
-    private lateinit var documentStore: DocumentStore
+    private lateinit var authorDao: AuthorDao
+    private lateinit var documentDao: DocumentDao
     private lateinit var documentService: DocumentService
 
     @BeforeEach
     internal fun setUp() {
-        documentStore = mock()
-        authorStore = mock()
-        documentService = InkpotCore.createContext(authorStore, documentStore).documentService()
+        documentDao = mock()
+        authorDao = mock()
+        documentService = InkpotCore.createContext(authorDao, documentDao).documentService()
     }
 
     @Test
     internal fun createDocument() {
         val authorId = UUID.randomUUID()
         val createDocument = DocumentCreateData(authorId, TITLE, CONTENT)
-        whenever(authorStore.find(authorId)).thenReturn(Optional.of(aAuthorDto(authorId)))
+        whenever(authorDao.find(authorId)).thenReturn(Optional.of(aAuthorDto(authorId)))
 
         val document = documentService.createDocument(createDocument)
 
         var uuid: UUID
         argumentCaptor<DocumentDto>().apply {
-            verify(documentStore).save(capture())
+            verify(documentDao).save(capture())
 
             uuid = firstValue.id
             assertNotNull(uuid)
@@ -63,12 +63,12 @@ internal class DocumentServiceTest {
     internal fun `find an existing document`() {
         val uuid = UUID.randomUUID()
         val authorId = UUID.randomUUID()
-        whenever(documentStore.find(uuid)).thenReturn(Optional.of(aDocumentDto(uuid, authorId)))
+        whenever(documentDao.find(uuid)).thenReturn(Optional.of(aDocumentDto(uuid, authorId)))
 
         val document = documentService.findDocument(uuid)
 
         argumentCaptor<UUID>().apply {
-            verify(documentStore).find(capture())
+            verify(documentDao).find(capture())
 
             assertEquals(uuid, firstValue)
         }
@@ -83,12 +83,12 @@ internal class DocumentServiceTest {
     @Test
     internal fun `find an non existing document`() {
         val uuid = UUID.randomUUID()
-        whenever(documentStore.find(uuid)).thenReturn(Optional.empty())
+        whenever(documentDao.find(uuid)).thenReturn(Optional.empty())
 
         val document = documentService.findDocument(uuid)
 
         argumentCaptor<UUID>().apply {
-            verify(documentStore).find(capture())
+            verify(documentDao).find(capture())
 
             assertEquals(uuid, firstValue)
         }
@@ -100,12 +100,12 @@ internal class DocumentServiceTest {
     internal fun `find all documents`() {
         val uuid = UUID.randomUUID()
         val authorId = UUID.randomUUID()
-        whenever(documentStore.findAll())
+        whenever(documentDao.findAll())
             .thenReturn(setOf(aDocumentDto(uuid, authorId)))
 
         val documents = documentService.findAllDocuments()
 
-        verify(documentStore).findAll()
+        verify(documentDao).findAll()
 
         assertEquals(1, documents.size)
 
@@ -123,7 +123,7 @@ internal class DocumentServiceTest {
         documentService.deleteDocument(uuid)
 
         argumentCaptor<UUID>().apply {
-            verify(documentStore).delete(capture())
+            verify(documentDao).delete(capture())
 
             assertEquals(uuid, firstValue)
         }

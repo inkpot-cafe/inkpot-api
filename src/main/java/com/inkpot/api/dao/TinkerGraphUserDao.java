@@ -9,6 +9,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Optional;
 
 import static com.inkpot.api.iam.EncryptionUtil.sha256;

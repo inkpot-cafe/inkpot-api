@@ -9,16 +9,11 @@ import java.security.NoSuchAlgorithmException;
 public class EncryptionUtil {
 
     private static final String ENCRYPTION_PASSWORD = "encryption.password";
-    private static final String SHA_512 = "SHA-512";
+    private static final String SHA_256 = "SHA-256";
 
-    public static String sha512(String str) {
+    public static String sha256(String str) {
         var md = messageDigest();
-        addSalt(md);
         return encrypt(str, md);
-    }
-
-    public static String sha512Key() {
-        return sha512(readEncryptionPassword());
     }
 
     public static String readEncryptionPassword() {
@@ -27,14 +22,10 @@ public class EncryptionUtil {
 
     private static MessageDigest messageDigest() {
         try {
-            return MessageDigest.getInstance(SHA_512);
+            return MessageDigest.getInstance(SHA_256);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    private static void addSalt(MessageDigest md) {
-        md.update(readEncryptionPassword().getBytes(StandardCharsets.UTF_8));
     }
 
     private static String encrypt(String str, MessageDigest md) {

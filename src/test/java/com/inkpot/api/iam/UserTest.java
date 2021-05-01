@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static com.inkpot.api.iam.EncryptionUtil.sha512;
+import static com.inkpot.api.iam.EncryptionUtil.sha256;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTest
@@ -15,7 +15,7 @@ public class UserTest {
     public static final UUID AUTHOR_ID = UUID.randomUUID();
     public static final String PASSWORD = "password";
     public static final String USERNAME = "username";
-    public static final String ENCRYPTED_PASSWORD = sha512(PASSWORD);
+    public static final String ENCRYPTED_PASSWORD = sha256(PASSWORD);
 
     @Test
     void builder() {

@@ -1,22 +1,24 @@
 package com.inkpot.api.iam;
 
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import io.smallrye.jwt.build.Jwt;
+import io.smallrye.jwt.util.KeyUtils;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.MalformedClaimException;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.jose4j.lang.JoseException;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+
+import static com.inkpot.api.iam.EncryptionUtil.readEncryptionPassword;
+import static com.inkpot.api.iam.EncryptionUtil.sha256;
 
 public final class Token {
 
     private final String subject;
-    private final String stringValue;
 
     private Token(Builder builder) {
         this.subject = builder.subject;
-        this.stringValue = builder.stringValue;
     }
 
     public static Builder builder() {
@@ -28,29 +30,34 @@ public final class Token {
     }
 
     public String asString() {
-        return stringValue;
+        return Jwt.subject(subject).sign(KeyUtils.createSecretKeyFromSecret(readSecret()));
     }
 
     public static Token fromStringToken(String stringToken) {
-        var jwtParser = instantiateJwtParser();
-        var body = jwtParser.parseClaimsJws(stringToken).getBody();
-
-        return builder().subject(body.getSubject()).build();
+        try {
+            var jws = JsonWebSignature.fromCompactSerialization(stringToken);
+            jws.setKey(KeyUtils.createSecretKeyFromSecret(readSecret()));
+            var claims = JwtClaims.parse(jws.getPayload());
+            return builder().subject(claims.getSubject()).build();
+        } catch (InvalidJwtException | MalformedClaimException | JoseException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public static boolean isValidStringToken(String stringToken) {
-        var jwtParser = instantiateJwtParser();
-
         try {
-            jwtParser.parseClaimsJws(stringToken);
-            return true;
-        } catch (JwtException e) {
+            var jws = new JsonWebSignature();
+            jws.setCompactSerialization(stringToken);
+            jws.setKey(KeyUtils.createSecretKeyFromSecret(readSecret()));
+
+            return jws.verifySignature();
+        } catch (JoseException e) {
             return false;
         }
     }
 
-    private static JwtParser instantiateJwtParser() {
-        return Jwts.parserBuilder().setSigningKey(readSecretKey()).build();
+    private static String readSecret() {
+        return sha256(readEncryptionPassword());
     }
 
     @Override
@@ -58,18 +65,17 @@ public final class Token {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Token token = (Token) o;
-        return Objects.equals(getSubject(), token.getSubject()) && Objects.equals(stringValue, token.stringValue);
+        return Objects.equals(getSubject(), token.getSubject());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getSubject(), stringValue);
+        return Objects.hash(getSubject());
     }
-
     public static final class Builder {
 
+
         private String subject;
-        private String stringValue;
 
         private Builder() {
         }
@@ -80,18 +86,9 @@ public final class Token {
         }
 
         public Token build() {
-            generateStringToken();
             return new Token(this);
         }
 
-        private void generateStringToken() {
-            var secretKey = readSecretKey();
-            this.stringValue = Jwts.builder().setSubject(subject).signWith(secretKey).compact();
-        }
-    }
-
-    private static SecretKey readSecretKey() {
-        return Keys.hmacShaKeyFor(EncryptionUtil.sha512Key().getBytes(StandardCharsets.UTF_8));
     }
 
 }

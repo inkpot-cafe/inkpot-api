@@ -5,8 +5,7 @@ import io.quarkus.security.identity.CurrentIdentityAssociation;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import static com.inkpot.api.iam.EncryptionUtil.readEncryptionPassword;
-import static com.inkpot.api.iam.EncryptionUtil.sha512;
+import static com.inkpot.api.iam.EncryptionUtil.sha256;
 
 @ApplicationScoped
 public class Authenticator {
@@ -24,7 +23,7 @@ public class Authenticator {
     public User authenticate(String username, String password) throws AuthenticationException {
         var user = userDao.readUser(username).orElseThrow(this::noUserFoundException);
 
-        if (user.getEncryptedPassword().equals(sha512(password))) {
+        if (user.getEncryptedPassword().equals(sha256(password))) {
             return user;
         }
 

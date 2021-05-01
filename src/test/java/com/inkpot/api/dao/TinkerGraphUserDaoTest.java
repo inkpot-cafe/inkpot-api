@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
-import static com.inkpot.api.iam.EncryptionUtil.sha512;
+import static com.inkpot.api.iam.EncryptionUtil.sha256;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTest
@@ -38,7 +38,7 @@ class TinkerGraphUserDaoTest {
                 .tryNext();
 
         assertThat(vertex.isPresent()).isTrue();
-        assertThat(vertex.get().property(TinkerGraphUserDao.PASSWORD_KEY).value().toString()).isEqualTo(sha512(password));
+        assertThat(vertex.get().property(TinkerGraphUserDao.PASSWORD_KEY).value().toString()).isEqualTo(sha256(password));
     }
 
     @Test
@@ -47,7 +47,7 @@ class TinkerGraphUserDaoTest {
 
         assertThat(user.isPresent()).isTrue();
         assertThat(user.get().getUsername()).isEqualTo(username);
-        assertThat(user.get().getEncryptedPassword()).isEqualTo(sha512(password));
+        assertThat(user.get().getEncryptedPassword()).isEqualTo(sha256(password));
     }
 
     @Test

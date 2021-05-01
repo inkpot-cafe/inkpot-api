@@ -9,10 +9,9 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.Optional;
 
-import static com.inkpot.api.iam.EncryptionUtil.sha512;
+import static com.inkpot.api.iam.EncryptionUtil.sha256;
 
 @ApplicationScoped
 public class TinkerGraphUserDao implements UserDao {
@@ -34,7 +33,7 @@ public class TinkerGraphUserDao implements UserDao {
 
         g.addV(USER_LABEL)
                 .property(T.id, username)
-                .property(PASSWORD_KEY, sha512(password))
+                .property(PASSWORD_KEY, sha256(password))
                 .iterate();
     }
 

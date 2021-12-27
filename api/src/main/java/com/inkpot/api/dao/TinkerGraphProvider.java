@@ -4,6 +4,7 @@ import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
+import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyGraph;
@@ -17,8 +18,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
 import java.util.Optional;
-
-import static org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource.traversal;
 
 @Startup
 @ApplicationScoped
@@ -47,7 +46,7 @@ public class TinkerGraphProvider {
         }
         graph = TinkerGraph.open(configuration);
         LOGGER.info("TinkerGraph created");
-        return traversal().withEmbedded(graph);
+        return AnonymousTraversalSource.traversal().withEmbedded(graph);
     }
 
     @PreDestroy

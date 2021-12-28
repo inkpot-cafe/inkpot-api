@@ -1,6 +1,6 @@
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 WORKDIR /work/
-COPY build/*-runner /work/application
+COPY api/build/*-runner /work/application
 
 # set up permissions for user `1001`
 RUN mkdir /work/data
